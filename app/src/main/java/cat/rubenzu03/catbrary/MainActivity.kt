@@ -7,11 +7,15 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.Icon;
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,6 +24,8 @@ import cat.rubenzu03.catbrary.ui.theme.CatbraryTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,7 +33,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             CatbraryTheme {
-                Scaffold(modifier = Modifier.fillMaxSize(), bottomBar =  { BottomNavigationBar()}) { innerPadding ->
+                Scaffold(modifier = Modifier.fillMaxSize(),
+                    bottomBar =  { BottomNavigationBar()},
+                    topBar = { TopApplicationBar() }
+                ) { innerPadding ->
                     Greeting(
                         name = "Android",
                         modifier = Modifier.padding(innerPadding)
@@ -54,6 +63,7 @@ fun GreetingPreview() {
     }
 }
 
+@Preview
 @Composable
 fun BottomNavigationBar() {
     NavigationBar {
@@ -70,4 +80,21 @@ fun BottomNavigationBar() {
             )
         )
     }
+}
+
+@Preview
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TopApplicationBar(){
+    TopAppBar(
+        title = { Text("Catbrary") },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            titleContentColor = MaterialTheme.colorScheme.primary
+        ),
+         /*TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
+            titleContentColor = MaterialTheme.colorScheme.onPrimary
+        ),*/
+    )
 }
