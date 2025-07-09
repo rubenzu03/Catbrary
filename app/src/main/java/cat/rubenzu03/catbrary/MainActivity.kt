@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     topBar = { TopApplicationBar() },
                     bottomBar = { BottomNavigationBar(navController) },
-                    floatingActionButton = { CreateFAB(navController) },
+                    floatingActionButton = { CreateFAB() },
                     floatingActionButtonPosition = FabPosition.End
                 ) { innerPadding ->
                     NavHost(
