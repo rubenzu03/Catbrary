@@ -69,6 +69,24 @@ fun CreateCatFABDialog(onDismiss: () -> Unit) {
                     placeholder = "Enter the name of your cat",
                     modifier = Modifier.fillMaxWidth()
                 )
+
+                LabeledTextField(
+                    value = age,
+                    onValueChange = { age = it},
+                    label = "Cat Age",
+                    placeholder = "Enter the age of your cat",
+                    modifier = Modifier.fillMaxWidth(0.5f)
+                )
+
+                LabeledDropDown(
+                    options = CatBreeds.entries,
+                    selectedOption = null,
+                    onOptionSelected = { /* Handle breed selection */ },
+                    label = "Cat Breed",
+                    modifier = Modifier.fillMaxWidth(0.5f),
+                    placeholder = "Select a breed",
+                    optionToString = { it.name.replace('_', ' ').lowercase().replaceFirstChar { it.uppercase() } }
+                )
                 Spacer(modifier = Modifier.weight(1f))
             }
         }
