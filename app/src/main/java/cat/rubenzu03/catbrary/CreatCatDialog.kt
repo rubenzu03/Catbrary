@@ -29,7 +29,7 @@ import androidx.compose.ui.window.DialogProperties
 fun CreateCatFABDialog(onDismiss: () -> Unit) {
     var name by remember { mutableStateOf("") }
     var age by remember { mutableStateOf("") }
-
+    var selectedBreed by remember { mutableStateOf<CatBreeds?>(null) }
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -70,6 +70,16 @@ fun CreateCatFABDialog(onDismiss: () -> Unit) {
                     modifier = Modifier.fillMaxWidth()
                 )
 
+                LabeledDropDown(
+                    options = CatBreeds.entries,
+                    selectedOption = selectedBreed,
+                    onOptionSelected = { selectedBreed = it },
+                    label = "Cat Breed",
+                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = "Select a breed",
+                    optionToString = { it.name.replace('_', ' ').lowercase().replaceFirstChar { it.uppercase() } }
+                )
+
                 LabeledTextField(
                     value = age,
                     onValueChange = { age = it},
@@ -78,15 +88,7 @@ fun CreateCatFABDialog(onDismiss: () -> Unit) {
                     modifier = Modifier.fillMaxWidth(0.5f)
                 )
 
-                LabeledDropDown(
-                    options = CatBreeds.entries,
-                    selectedOption = null,
-                    onOptionSelected = { /* Handle breed selection */ },
-                    label = "Cat Breed",
-                    modifier = Modifier.fillMaxWidth(0.5f),
-                    placeholder = "Select a breed",
-                    optionToString = { it.name.replace('_', ' ').lowercase().replaceFirstChar { it.uppercase() } }
-                )
+
                 Spacer(modifier = Modifier.weight(1f))
             }
         }
