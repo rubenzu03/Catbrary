@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -22,32 +21,32 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.viewmodel.compose.viewModel
 import cat.rubenzu03.catbrary.domain.CatBreeds
+import cat.rubenzu03.catbrary.ui.viewmodel.CreateCatViewModel
 
 
 @Composable
-fun CreateCatFABDialog(onDismiss: () -> Unit) {
-    var name by remember { mutableStateOf("") }
-    var age by remember { mutableStateOf("") }
-    var selectedBreed by remember { mutableStateOf<CatBreeds?>(null) }
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
+fun CreateCatFABDialog(onDismiss: () -> Unit,
+                       viewModel: CreateCatViewModel = viewModel()
+) {
+
+    val name = viewModel.name
+    val age = viewModel.age
+    val selectedBreed = viewModel.selectedBreed
+    val imageUri = viewModel.imageUri
 
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) {
-        uri: Uri? ->
-        if (uri != null) {
-            imageUri = uri
+        { uri: Uri? ->
+            viewModel.imageUri = uri
         }
     }
 
@@ -86,7 +85,7 @@ fun CreateCatFABDialog(onDismiss: () -> Unit) {
                 Spacer(modifier = Modifier.height(24.dp))
                 LabeledTextField(
                     value = name,
-                    onValueChange = { name = it },
+                    onValueChange = { viewModel.name = it },
                     label = "Cat Name",
                     placeholder = "Enter the name of your cat",
                     modifier = Modifier.fillMaxWidth(),
@@ -95,7 +94,7 @@ fun CreateCatFABDialog(onDismiss: () -> Unit) {
                 LabeledDropDown(
                     options = CatBreeds.entries,
                     selectedOption = selectedBreed,
-                    onOptionSelected = { selectedBreed = it },
+                    onOptionSelected = { viewModel.selectedBreed = it },
                     label = "Cat Breed",
                     modifier = Modifier.fillMaxWidth(),
                     placeholder = "Select a breed",
@@ -104,7 +103,7 @@ fun CreateCatFABDialog(onDismiss: () -> Unit) {
 
                 LabeledTextField(
                     value = age,
-                    onValueChange = { age = it},
+                    onValueChange = { viewModel.age = it },
                     label = "Cat Age",
                     placeholder = "Enter the age of your cat",
                     modifier = Modifier.fillMaxWidth(),
@@ -123,7 +122,10 @@ fun CreateCatFABDialog(onDismiss: () -> Unit) {
                     contentAlignment = Alignment.Center
                 ) {
                     SaveFillButton(
-                        onClick = { onDismiss() },
+                        onClick = {
+                            viewModel.saveCat()
+                            onDismiss()
+                                  },
                         modifier = Modifier.width(200.dp).height(60.dp)
                     )
                 }
