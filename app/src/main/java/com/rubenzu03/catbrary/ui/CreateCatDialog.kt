@@ -1,4 +1,4 @@
-package cat.rubenzu03.catbrary.ui.composables
+package com.rubenzu03.catbrary.ui.composables
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -30,6 +30,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import cat.rubenzu03.catbrary.domain.CatBreeds
 import cat.rubenzu03.catbrary.ui.viewmodel.CreateCatViewModel
+import com.rubenzu03.catbrary.ui.LabeledTextField
 
 
 @Composable

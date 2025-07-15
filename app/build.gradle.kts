@@ -16,11 +16,11 @@ kotlin {
 }
 
 android {
-    namespace = "cat.rubenzu03.catbrary"
+    namespace = "com.rubenzu03.catbrary"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "cat.rubenzu03.catbrary"
+        applicationId = "com.rubenzu03.catbrary"
         minSdk = 31
         targetSdk = 36
         versionCode = 1

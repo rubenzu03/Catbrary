@@ -1,4 +1,4 @@
-package cat.rubenzu03.catbrary.ui.theme
+package com.rubenzu03.catbrary.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
