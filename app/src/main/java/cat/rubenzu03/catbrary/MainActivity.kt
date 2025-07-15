@@ -1,4 +1,4 @@
-package com.rubenzu03.catbrary
+package cat.rubenzu03.catbrary
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

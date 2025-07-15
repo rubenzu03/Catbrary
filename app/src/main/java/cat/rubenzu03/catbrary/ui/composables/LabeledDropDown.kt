@@ -1,4 +1,4 @@
-package com.rubenzu03.catbrary.ui.composables
+package cat.rubenzu03.catbrary.ui.composables
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.DropdownMenuItem

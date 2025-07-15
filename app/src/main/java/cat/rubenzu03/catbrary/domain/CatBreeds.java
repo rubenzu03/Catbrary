@@ -1,4 +1,4 @@
-package com.rubenzu03.catbrary.domain;
+package cat.rubenzu03.catbrary.domain;
 
 public enum CatBreeds {
     American_Bobtail,

@@ -1,4 +1,4 @@
-package com.rubenzu03.catbrary.ui
+package cat.rubenzu03.catbrary.ui.composables
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.text.KeyboardOptions

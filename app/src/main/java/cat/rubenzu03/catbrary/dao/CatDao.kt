@@ -1,8 +1,9 @@
-package com.rubenzu03.catbrary.dao
+package cat.rubenzu03.catbrary.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import cat.rubenzu03.catbrary.domain.Cat
 
 @Dao
 interface CatDao {
