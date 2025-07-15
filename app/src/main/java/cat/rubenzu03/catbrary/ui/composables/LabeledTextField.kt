@@ -1,6 +1,7 @@
-package cat.rubenzu03.catbrary
+package cat.rubenzu03.catbrary.ui.composables
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,6 +14,7 @@ fun LabeledTextField(
     onValueChange: (String) -> Unit,
     label: String,
     placeholder: String? = null,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
 ) {
     OutlinedTextField(
@@ -20,6 +22,7 @@ fun LabeledTextField(
         onValueChange = onValueChange,
         label = { Text(label) },
         placeholder = if (placeholder != null) { { Text(placeholder) } } else null,
-        modifier = modifier
+        modifier = modifier,
+        keyboardOptions = keyboardOptions
     )
 }

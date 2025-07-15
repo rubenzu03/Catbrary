@@ -1,4 +1,4 @@
-package cat.rubenzu03.catbrary
+package cat.rubenzu03.catbrary.ui.composables
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -11,7 +11,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.navigation.NavController
 
 
 @Composable

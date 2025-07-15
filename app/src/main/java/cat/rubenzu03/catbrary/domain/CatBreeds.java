@@ -1,4 +1,4 @@
-package cat.rubenzu03.catbrary;
+package cat.rubenzu03.catbrary.domain;
 
 public enum CatBreeds {
     American_Bobtail,
@@ -12,4 +12,5 @@ public enum CatBreeds {
     Siamese,
     Siberian,
     Sphynx,
+    NONE
 }
