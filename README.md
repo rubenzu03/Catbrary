@@ -1,6 +1,6 @@
 # Catbrary
 
-An app to keep track of the cats you have or find around!
+An app to keep track of the cats you have at home or the ones you find around!
 
 
 
@@ -29,6 +29,7 @@ Add badges from somewhere like: [shields.io](https://shields.io/)
 - **NOTE:** Android 12+ required
     
 ## Roadmap
+- Image picker
 
 - Delete a cat 
 
