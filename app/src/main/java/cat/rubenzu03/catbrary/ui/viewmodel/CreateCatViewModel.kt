@@ -17,6 +17,8 @@ class CreateCatViewModel(private val repo: CatRepository) : ViewModel() {
     var selectedBreed by mutableStateOf<CatBreeds?>(null)
     var imageUri by mutableStateOf<Uri?>(null)
 
+    var cats by mutableStateOf<List<Cat>>(emptyList())
+        private set
 
     fun saveCat() {
         val catName = name.trim()
@@ -27,6 +29,12 @@ class CreateCatViewModel(private val repo: CatRepository) : ViewModel() {
         val newCat = Cat(catName, catAge, catBreed, catImage)
         viewModelScope.launch {
             repo.insertCat(newCat)
+        }
+    }
+
+    fun loadAllCats(){
+        viewModelScope.launch {
+            cats = repo.getAllCats()
         }
     }
 }

@@ -29,14 +29,25 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import cat.rubenzu03.catbrary.domain.Cat
+import cat.rubenzu03.catbrary.domain.CatBreeds
+import cat.rubenzu03.catbrary.persistence.CatRepository
+import cat.rubenzu03.catbrary.ui.composables.CatList
 import cat.rubenzu03.catbrary.ui.composables.CreateFAB
+import cat.rubenzu03.catbrary.ui.viewmodel.CreateCatViewModel
+import cat.rubenzu03.catbrary.ui.viewmodel.CreateCatViewModelFactory
 
 
 class MainActivity : ComponentActivity() {
@@ -105,7 +116,7 @@ class MainActivity : ComponentActivity() {
                 )
             )
 
-            NavigationBarItem(
+            /*NavigationBarItem(
                 selected = currentRoute == "favorites",
                 onClick = {
                     navController.navigate("favorites") {
@@ -138,7 +149,7 @@ class MainActivity : ComponentActivity() {
                     selectedTextColor = MaterialTheme.colorScheme.primary,
                     unselectedTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
-            )
+            )*/
         }
     }
 
@@ -162,10 +173,19 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun MainScreen(modifier: Modifier = Modifier) {
-        Text(
-            text = "Welcome to Catbrary!",
-            /* TYPOGRAPHY TEST style = MaterialTheme.typography.headlineLarge, */
-            modifier = modifier.padding(16.dp)
+        val context = LocalContext.current
+        val repo = remember { CatRepository.getInstance(context) }
+        val factory = remember { CreateCatViewModelFactory(repo) }
+        val viewModel: CreateCatViewModel = viewModel(factory = factory)
+        LaunchedEffect(Unit) {
+            viewModel.loadAllCats()
+        }
+        val cats = viewModel.cats
+        CatList(cats = cats, modifier = modifier)
+        val sampleCats = listOf(
+            Cat("Test1", 2, CatBreeds.Maine_Coon, ""),
+            Cat("Test2", 3, CatBreeds.Siamese, ""),
+            Cat("Test3", 1, CatBreeds.Maine_Coon, "")
         )
     }
 
