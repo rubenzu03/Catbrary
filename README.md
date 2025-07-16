@@ -19,7 +19,8 @@ Add badges from somewhere like: [shields.io](https://shields.io/)
 
 ## Screenshots
 
-![App Screenshot]()
+<img width="250" height="1000" alt="Screenshot_20250716_231316" src="https://github.com/user-attachments/assets/7e2357ab-25dd-4478-afaa-e89382ee3bd7" />
+<img width="250" height="1000" alt="Screenshot_20250716_231346" src="https://github.com/user-attachments/assets/9e6492e5-e348-4ca3-b6e4-9730c5a16cc6" />
 
 
 ## Installation
