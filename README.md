@@ -14,12 +14,12 @@ Add badges from somewhere like: [shields.io](https://shields.io/)
 
 ## Features
 
-- Material 3 Design
+- Made using Material You colors and Material 3 guidelines
 
 
 ## Screenshots
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+![App Screenshot]()
 
 
 ## Installation
