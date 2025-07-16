@@ -21,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
@@ -29,14 +30,19 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import cat.rubenzu03.catbrary.domain.CatBreeds
+import cat.rubenzu03.catbrary.persistence.CatRepository
 import cat.rubenzu03.catbrary.ui.viewmodel.CreateCatViewModel
+import cat.rubenzu03.catbrary.ui.viewmodel.CreateCatViewModelFactory
 
 
 @Composable
 fun CreateCatFABDialog(onDismiss: () -> Unit,
-                       viewModel: CreateCatViewModel = viewModel()
+                       repo: CatRepository
 ) {
-
+    val factory = remember { CreateCatViewModelFactory(repo) }
+    val viewModel: CreateCatViewModel = viewModel(
+        factory = factory
+    )
     val name = viewModel.name
     val age = viewModel.age
     val selectedBreed = viewModel.selectedBreed

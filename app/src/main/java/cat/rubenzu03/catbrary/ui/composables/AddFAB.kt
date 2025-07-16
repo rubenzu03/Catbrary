@@ -11,6 +11,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
+import cat.rubenzu03.catbrary.persistence.CatRepository
 
 
 @Composable
@@ -18,8 +20,13 @@ fun CreateFAB() {
 
     var showDialog by remember { mutableStateOf(false) }
 
+    val context = LocalContext.current
+    val repo = remember { CatRepository.getInstance(context) }
+
     if (showDialog) {
-        CreateCatFABDialog(onDismiss = { showDialog = false })
+        CreateCatFABDialog(onDismiss = { showDialog = false },
+            repo = repo
+        )
     }
 
     ExtendedFloatingActionButton(
