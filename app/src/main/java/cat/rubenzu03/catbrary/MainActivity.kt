@@ -50,17 +50,24 @@ import cat.rubenzu03.catbrary.ui.viewmodel.CreateCatViewModel
 import cat.rubenzu03.catbrary.ui.viewmodel.CreateCatViewModelFactory
 
 
+
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val context = LocalContext.current
+            val repo = remember { CatRepository.getInstance(context) }
+            val factory = remember { CreateCatViewModelFactory(repo) }
+            val viewModel: CreateCatViewModel = viewModel(factory = factory)
             CatbraryTheme {
                 val navController = rememberNavController()
                 Scaffold(
                     topBar = { TopApplicationBar() },
                     bottomBar = { BottomNavigationBar(navController) },
-                    floatingActionButton = { CreateFAB() },
+                    floatingActionButton = { CreateFAB(viewModel = viewModel )},
                     floatingActionButtonPosition = FabPosition.End
                 ) { innerPadding ->
                     NavHost(
@@ -82,7 +89,7 @@ class MainActivity : ComponentActivity() {
                         }
 
                     ) {
-                        composable("home") { MainScreen() }
+                        composable("home") { MainScreen(viewModel = viewModel) }
                         composable("favorites") { FavoritesScreen() }
                         composable("search") { SearchScreen() }
                     }
@@ -172,21 +179,14 @@ class MainActivity : ComponentActivity() {
 
 
     @Composable
-    fun MainScreen(modifier: Modifier = Modifier) {
-        val context = LocalContext.current
-        val repo = remember { CatRepository.getInstance(context) }
-        val factory = remember { CreateCatViewModelFactory(repo) }
-        val viewModel: CreateCatViewModel = viewModel(factory = factory)
+    fun MainScreen(modifier: Modifier = Modifier,
+                   viewModel: CreateCatViewModel
+    ) {
         LaunchedEffect(Unit) {
             viewModel.loadAllCats()
         }
         val cats = viewModel.cats
         CatList(cats = cats, modifier = modifier)
-        val sampleCats = listOf(
-            Cat("Test1", 2, CatBreeds.Maine_Coon, ""),
-            Cat("Test2", 3, CatBreeds.Siamese, ""),
-            Cat("Test3", 1, CatBreeds.Maine_Coon, "")
-        )
     }
 
 

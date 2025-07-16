@@ -37,12 +37,8 @@ import cat.rubenzu03.catbrary.ui.viewmodel.CreateCatViewModelFactory
 
 @Composable
 fun CreateCatFABDialog(onDismiss: () -> Unit,
-                       repo: CatRepository
+                       viewModel: CreateCatViewModel
 ) {
-    val factory = remember { CreateCatViewModelFactory(repo) }
-    val viewModel: CreateCatViewModel = viewModel(
-        factory = factory
-    )
     val name = viewModel.name
     val age = viewModel.age
     val selectedBreed = viewModel.selectedBreed

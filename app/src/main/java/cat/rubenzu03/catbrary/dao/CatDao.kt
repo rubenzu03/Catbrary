@@ -10,8 +10,8 @@ interface CatDao {
     @Query("SELECT * FROM cats")
     suspend fun getAllCats(): List<Cat>
 
-    @Query("SELECT breed, SUM(breed) FROM cats  WHERE breed != 'NONE' GROUP BY breed")
-    suspend fun getCatBreedsCount(): List<Pair<String, Int>>
+   /* @Query("SELECT breed, SUM(breed) FROM cats  WHERE breed != 'NONE' GROUP BY breed")
+    suspend fun getCatBreedsCount(): List<Pair<String, Int>>*/
 
     @Insert
     suspend fun insertCat(cat: Cat)

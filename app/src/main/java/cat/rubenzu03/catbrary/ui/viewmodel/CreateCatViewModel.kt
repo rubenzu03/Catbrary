@@ -29,6 +29,7 @@ class CreateCatViewModel(private val repo: CatRepository) : ViewModel() {
         val newCat = Cat(catName, catAge, catBreed, catImage)
         viewModelScope.launch {
             repo.insertCat(newCat)
+            loadAllCats()
         }
     }
 
