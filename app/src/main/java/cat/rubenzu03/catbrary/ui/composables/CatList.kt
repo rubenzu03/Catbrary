@@ -10,10 +10,15 @@ import androidx.compose.ui.Modifier
 import cat.rubenzu03.catbrary.domain.Cat
 
 @Composable
-fun CatList(cats: List<Cat>, modifier: Modifier) {
+fun CatList(
+    cats: List<Cat>,
+    modifier: Modifier,
+    isEditMode: Boolean = false,
+    onDeleteCat: (Cat) -> Unit = {}
+) {
     LazyColumn(modifier = modifier) {
         items(cats) { cat ->
-            CatItem(cat, modifier = Modifier)
+            CatItem(cat, modifier = Modifier, isEditMode = isEditMode, onDeleteCat = onDeleteCat)
         }
     }
 }

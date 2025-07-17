@@ -20,6 +20,9 @@ class CreateCatViewModel(private val repo: CatRepository) : ViewModel() {
     var cats by mutableStateOf<List<Cat>>(emptyList())
         private set
 
+    var isEditMode by mutableStateOf(false)
+        private set
+
     fun saveCat() {
         val catName = name.trim()
         val catAge = age.toIntOrNull() ?: 0
@@ -36,6 +39,17 @@ class CreateCatViewModel(private val repo: CatRepository) : ViewModel() {
     fun loadAllCats(){
         viewModelScope.launch {
             cats = repo.getAllCats()
+        }
+    }
+
+    fun toggleEditMode() {
+        isEditMode = !isEditMode
+    }
+
+    fun deleteCat(cat: Cat) {
+        viewModelScope.launch {
+            repo.deleteCat(cat)
+            loadAllCats()
         }
     }
 }

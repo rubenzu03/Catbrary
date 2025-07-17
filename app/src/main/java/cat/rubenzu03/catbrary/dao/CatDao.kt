@@ -1,6 +1,7 @@
 package cat.rubenzu03.catbrary.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import cat.rubenzu03.catbrary.domain.Cat
@@ -15,4 +16,7 @@ interface CatDao {
 
     @Insert
     suspend fun insertCat(cat: Cat)
+
+    @Delete
+    suspend fun deleteCat(cat: Cat)
 }

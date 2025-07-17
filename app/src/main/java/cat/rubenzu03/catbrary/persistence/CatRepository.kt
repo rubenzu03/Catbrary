@@ -11,6 +11,8 @@ class CatRepository(private val catDao: CatDao) {
 
     suspend fun insertCat(cat: Cat) = catDao.insertCat(cat)
 
+    suspend fun deleteCat(cat: Cat) = catDao.deleteCat(cat)
+
     companion object{
         @Volatile
         private var INSTANCE: CatRepository? = null

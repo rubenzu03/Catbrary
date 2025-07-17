@@ -2,8 +2,12 @@ package cat.rubenzu03.catbrary.ui.composables
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -14,7 +18,7 @@ import cat.rubenzu03.catbrary.domain.Cat
 import coil.compose.AsyncImage
 
 @Composable
-fun CatItem(cat: Cat, modifier: Modifier){
+fun CatItem(cat: Cat, modifier: Modifier, isEditMode: Boolean = false, onDeleteCat: (Cat) -> Unit = {}){
     Card(
         modifier = modifier.padding(horizontal = 16.dp, vertical = 8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -31,7 +35,19 @@ fun CatItem(cat: Cat, modifier: Modifier){
             },
             headlineContent = { Text(cat.name, style = MaterialTheme.typography.titleLarge) },
             supportingContent = { Text(cat.breed.name.replace('_', ' ').lowercase().replaceFirstChar { it.uppercase() }) },
-            trailingContent = { Text("Age: ${cat.age}", style = MaterialTheme.typography.bodyMedium) }
+            trailingContent = {
+                if (isEditMode) {
+                    IconButton(onClick = { onDeleteCat(cat) }) {
+                        Icon(
+                            Icons.Default.Delete,
+                            contentDescription = "Delete cat",
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                    }
+                } else {
+                    Text("Age: ${cat.age}", style = MaterialTheme.typography.bodyMedium)
+                }
+            }
         )
     }
 }

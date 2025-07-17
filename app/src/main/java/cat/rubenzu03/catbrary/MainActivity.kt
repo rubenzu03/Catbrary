@@ -13,11 +13,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -65,7 +68,7 @@ class MainActivity : ComponentActivity() {
             CatbraryTheme {
                 val navController = rememberNavController()
                 Scaffold(
-                    topBar = { TopApplicationBar() },
+                    topBar = { TopApplicationBar(viewModel) },
                     bottomBar = { BottomNavigationBar(navController) },
                     floatingActionButton = { CreateFAB(viewModel = viewModel )},
                     floatingActionButtonPosition = FabPosition.End
@@ -160,12 +163,19 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @Preview
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun TopApplicationBar() {
+    fun TopApplicationBar(viewModel: CreateCatViewModel) {
         TopAppBar(
             title = { Text("Catbrary") },
+            actions = {
+                IconButton(onClick = { viewModel.toggleEditMode() }) {
+                    Icon(
+                        imageVector = if (viewModel.isEditMode) Icons.Default.Done else Icons.Default.Edit,
+                        contentDescription = if (viewModel.isEditMode) "Done editing" else "Edit cats"
+                    )
+                }
+            },
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 titleContentColor = MaterialTheme.colorScheme.primary
@@ -186,7 +196,12 @@ class MainActivity : ComponentActivity() {
             viewModel.loadAllCats()
         }
         val cats = viewModel.cats
-        CatList(cats = cats, modifier = modifier)
+        CatList(
+            cats = cats,
+            modifier = modifier,
+            isEditMode = viewModel.isEditMode,
+            onDeleteCat = { cat -> viewModel.deleteCat(cat) }
+        )
     }
 
 
