@@ -63,7 +63,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val context = LocalContext.current
             val repo = remember { CatRepository.getInstance(context) }
-            val factory = remember { CreateCatViewModelFactory(repo) }
+            val factory = remember { CreateCatViewModelFactory(repo, context) }
             val viewModel: CreateCatViewModel = viewModel(factory = factory)
             CatbraryTheme {
                 val navController = rememberNavController()

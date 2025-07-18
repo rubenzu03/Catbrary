@@ -1,5 +1,6 @@
 package cat.rubenzu03.catbrary.ui.viewmodel
 
+import android.content.Context
 import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -10,8 +11,11 @@ import cat.rubenzu03.catbrary.domain.Cat
 import cat.rubenzu03.catbrary.domain.CatBreeds
 import cat.rubenzu03.catbrary.persistence.CatRepository
 import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileOutputStream
+import java.util.UUID
 
-class CreateCatViewModel(private val repo: CatRepository) : ViewModel() {
+class CreateCatViewModel(private val repo: CatRepository, private val context: Context) : ViewModel() {
     var name by mutableStateOf("")
     var age by mutableStateOf("")
     var selectedBreed by mutableStateOf<CatBreeds?>(null)
@@ -23,20 +27,63 @@ class CreateCatViewModel(private val repo: CatRepository) : ViewModel() {
     var isEditMode by mutableStateOf(false)
         private set
 
+    private fun saveImageToInternalStorage(uri: Uri): String? {
+        return try {
+            val inputStream = context.contentResolver.openInputStream(uri)
+            val fileName = "cat_${UUID.randomUUID()}.jpg"
+            val file = File(context.filesDir, fileName)
+
+            inputStream?.use { input ->
+                FileOutputStream(file).use { output ->
+                    input.copyTo(output)
+                }
+            }
+
+            file.absolutePath
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
     fun saveCat() {
         val catName = name.trim()
         val catAge = age.toIntOrNull() ?: 0
         val catBreed = selectedBreed ?: CatBreeds.NONE
-        val catImage = imageUri?.toString() ?: ""
+
+        val catImage = imageUri?.let { uri ->
+            saveImageToInternalStorage(uri)
+        } ?: ""
 
         val newCat = Cat(catName, catAge, catBreed, catImage)
         viewModelScope.launch {
             repo.insertCat(newCat)
             loadAllCats()
+            clearForm()
         }
     }
 
-    fun loadAllCats(){
+    fun clearForm() {
+        name = ""
+        age = ""
+        selectedBreed = null
+        imageUri = null
+    }
+
+    private fun deleteImageFile(imagePath: String) {
+        if (imagePath.isNotEmpty()) {
+            try {
+                val file = File(imagePath)
+                if (file.exists()) {
+                    file.delete()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun loadAllCats() {
         viewModelScope.launch {
             cats = repo.getAllCats()
         }
@@ -48,6 +95,7 @@ class CreateCatViewModel(private val repo: CatRepository) : ViewModel() {
 
     fun deleteCat(cat: Cat) {
         viewModelScope.launch {
+            deleteImageFile(cat.image)
             repo.deleteCat(cat)
             loadAllCats()
         }
