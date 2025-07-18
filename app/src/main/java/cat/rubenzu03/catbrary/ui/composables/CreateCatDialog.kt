@@ -20,6 +20,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -73,6 +75,7 @@ fun CreateCatFABDialog(onDismiss: () -> Unit,
                     .padding(12.dp)
                     .padding(WindowInsets.navigationBars.asPaddingValues())
                     .heightIn(max = 600.dp)
+                    .verticalScroll(rememberScrollState())
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -131,7 +134,13 @@ fun CreateCatFABDialog(onDismiss: () -> Unit,
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(200.dp)
+                        .let { modifier ->
+                            if (imageUri != null) {
+                                modifier.wrapContentHeight()
+                            } else {
+                                modifier.height(200.dp)
+                            }
+                        }
                         .clip(RoundedCornerShape(16.dp))
                         .border(
                             BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
@@ -143,14 +152,16 @@ fun CreateCatFABDialog(onDismiss: () -> Unit,
                         AsyncImage(
                             model = imageUri,
                             contentDescription = "Cat Image",
-                            contentScale = ContentScale.Crop,
+                            contentScale = ContentScale.Fit,
                             modifier = Modifier
-                                .fillMaxSize()
+                                .fillMaxWidth()
+                                .heightIn(min = 150.dp, max = 400.dp)
                                 .clip(RoundedCornerShape(16.dp))
                         )
                     } else {
                         Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.padding(32.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.AddAPhoto,
