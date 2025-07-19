@@ -10,7 +10,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Edit
@@ -24,7 +23,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import cat.rubenzu03.catbrary.ui.theme.CatbraryTheme
 
 import androidx.compose.material3.NavigationBar
@@ -37,23 +35,26 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import cat.rubenzu03.catbrary.domain.Cat
-import cat.rubenzu03.catbrary.domain.CatBreeds
 import cat.rubenzu03.catbrary.persistence.CatRepository
 import cat.rubenzu03.catbrary.ui.composables.CatList
 import cat.rubenzu03.catbrary.ui.composables.CreateFAB
 import cat.rubenzu03.catbrary.ui.viewmodel.CreateCatViewModel
 import cat.rubenzu03.catbrary.ui.viewmodel.CreateCatViewModelFactory
-
-
-
+import cat.rubenzu03.catbrary.ui.viewmodel.SearchViewModel
+import cat.rubenzu03.catbrary.ui.viewmodel.SearchViewModelFactory
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.Alignment
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -126,23 +127,6 @@ class MainActivity : ComponentActivity() {
                 )
             )
 
-            /*NavigationBarItem(
-                selected = currentRoute == "favorites",
-                onClick = {
-                    navController.navigate("favorites") {
-                        popUpTo(navController.graph.startDestinationId)
-                        launchSingleTop = true
-                    }
-                },
-                icon = { Icon(Icons.Default.FavoriteBorder, contentDescription = "Favorites") },
-                label = { Text("Favorites") },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = MaterialTheme.colorScheme.primary,
-                    unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                    selectedTextColor = MaterialTheme.colorScheme.primary,
-                    unselectedTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                )
-            )
             NavigationBarItem(
                 selected = currentRoute == "search",
                 onClick = {
@@ -153,6 +137,24 @@ class MainActivity : ComponentActivity() {
                 },
                 icon = { Icon(Icons.Default.Search, contentDescription = "Search") },
                 label = { Text("Search") },
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                    unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                    selectedTextColor = MaterialTheme.colorScheme.primary,
+                    unselectedTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                )
+            )
+
+            /*NavigationBarItem(
+                selected = currentRoute == "favorites",
+                onClick = {
+                    navController.navigate("favorites") {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
+                    }
+                },
+                icon = { Icon(Icons.Default.FavoriteBorder, contentDescription = "Favorites") },
+                label = { Text("Favorites") },
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = MaterialTheme.colorScheme.primary,
                     unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
@@ -215,9 +217,63 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun SearchScreen(modifier: Modifier = Modifier) {
-        Text(
-            text = "Search Screen",
-            modifier = modifier.padding(16.dp)
-        )
+        val context = LocalContext.current
+        val repo = remember { CatRepository.getInstance(context) }
+        val searchFactory = remember { SearchViewModelFactory(repo) }
+        val searchViewModel: SearchViewModel = viewModel(factory = searchFactory)
+
+        val searchQuery by searchViewModel.searchQuery
+        val searchResults by searchViewModel.searchResults
+        val isSearching by searchViewModel.isSearching
+
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { newQuery -> searchViewModel.updateSearchQuery(newQuery) },
+                label = { Text("Search cats by name...") },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            if (isSearching) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            } else if (searchQuery.isNotBlank() && searchResults.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("No cats found matching \"$searchQuery\"")
+                }
+            } else if (searchResults.isNotEmpty()) {
+                CatList(
+                    cats = searchResults,
+                    modifier = Modifier.padding(top = 16.dp),
+                    isEditMode = false,
+                    onDeleteCat = {}
+                )
+            } else if (searchQuery.isBlank()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("Enter a cat name to search")
+                }
+            }
+        }
     }
 }

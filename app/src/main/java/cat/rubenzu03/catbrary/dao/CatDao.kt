@@ -11,6 +11,9 @@ interface CatDao {
     @Query("SELECT * FROM cats")
     suspend fun getAllCats(): List<Cat>
 
+    @Query("SELECT * FROM cats WHERE name LIKE '%' || :searchQuery || '%'")
+    suspend fun searchCatsByName(searchQuery: String): List<Cat>
+
    /* @Query("SELECT breed, SUM(breed) FROM cats  WHERE breed != 'NONE' GROUP BY breed")
     suspend fun getCatBreedsCount(): List<Pair<String, Int>>*/
 

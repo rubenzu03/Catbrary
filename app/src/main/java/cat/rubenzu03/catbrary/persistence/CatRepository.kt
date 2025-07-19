@@ -7,6 +7,8 @@ import cat.rubenzu03.catbrary.domain.Cat
 class CatRepository(private val catDao: CatDao) {
     suspend fun getAllCats() = catDao.getAllCats()
 
+    suspend fun searchCatsByName(searchQuery: String) = catDao.searchCatsByName(searchQuery)
+
     //suspend fun getCatBreedsCount() = catDao.getCatBreedsCount()
 
     suspend fun insertCat(cat: Cat) = catDao.insertCat(cat)
