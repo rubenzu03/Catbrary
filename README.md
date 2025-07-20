@@ -26,10 +26,6 @@ An app to keep track of the cats you have at home or the ones you find around!
 - **NOTE:** Android 12+ required
     
 ## Roadmap
-- Image picker
-
-- Delete a cat 
-
-- Search system based on cat name
-
 - Favorites tab
+- Cat photos
+- Cat of the day
