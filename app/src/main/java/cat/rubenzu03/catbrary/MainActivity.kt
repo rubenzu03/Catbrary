@@ -23,6 +23,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import cat.rubenzu03.catbrary.ui.theme.CatbraryTheme
 
 import androidx.compose.material3.NavigationBar
@@ -164,6 +165,14 @@ class MainActivity : ComponentActivity() {
             )*/
         }
     }
+
+    @Preview
+    @Composable
+    fun BottomNavigationBarPreview() {
+        val navController = rememberNavController()
+        BottomNavigationBar(navController)
+    }
+
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable

@@ -14,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,4 +61,20 @@ fun <T> LabeledDropDown(
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview
+@Composable
+fun LabeledDropDownPreview() {
+    val options = listOf("Option 1", "Option 2", "Option 3")
+    var selectedOption by remember { mutableStateOf<String?>(null) }
+
+    LabeledDropDown(
+        options = options,
+        selectedOption = selectedOption,
+        onOptionSelected = { selectedOption = it },
+        label = "Select an option",
+        placeholder = "Choose one"
+    )
 }

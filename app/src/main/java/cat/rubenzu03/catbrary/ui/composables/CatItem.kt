@@ -14,15 +14,23 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cat.rubenzu03.catbrary.domain.Cat
+import cat.rubenzu03.catbrary.domain.CatBreeds
 import coil.compose.AsyncImage
 
 @Composable
 fun CatItem(cat: Cat, modifier: Modifier, isEditMode: Boolean = false, onDeleteCat: (Cat) -> Unit = {}){
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
     Card(
         modifier = modifier.padding(horizontal = 16.dp, vertical = 8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
@@ -63,7 +71,7 @@ fun CatItem(cat: Cat, modifier: Modifier, isEditMode: Boolean = false, onDeleteC
             },
             trailingContent = {
                 if (isEditMode) {
-                    IconButton(onClick = { onDeleteCat(cat) }) {
+                    IconButton(onClick = { showDeleteDialog = true }) {
                         Icon(
                             Icons.Default.Delete,
                             contentDescription = "Delete cat",
@@ -80,4 +88,28 @@ fun CatItem(cat: Cat, modifier: Modifier, isEditMode: Boolean = false, onDeleteC
             }
         )
     }
+
+    if (showDeleteDialog) {
+        DeleteConfirmationDialog(
+            onDismiss = { showDeleteDialog = false },
+            onConfirm = {
+                onDeleteCat(cat)
+                showDeleteDialog = false
+            }
+        )
+    }
+}
+
+@Preview
+@Composable
+fun CatItemPreview() {
+    val cat = Cat(name = "Whiskers", age = 3, breed = CatBreeds.Siamese, image = "https://cdn2.thecatapi.com/images/0XYvRd7oD.jpg")
+    CatItem(cat = cat, modifier = Modifier)
+}
+
+@Preview
+@Composable
+fun CatItemEditModePreview() {
+    val cat = Cat(name = "Shadow", age = 5, breed = CatBreeds.Maine_Coon, image = "")
+    CatItem(cat = cat, modifier = Modifier, isEditMode = true, onDeleteCat = {})
 }
