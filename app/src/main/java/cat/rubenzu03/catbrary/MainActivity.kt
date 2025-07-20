@@ -69,8 +69,9 @@ class MainActivity : ComponentActivity() {
             val viewModel: CreateCatViewModel = viewModel(factory = factory)
             CatbraryTheme {
                 val navController = rememberNavController()
+                val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
                 Scaffold(
-                    topBar = { TopApplicationBar(viewModel) },
+                    topBar = { TopApplicationBar(viewModel,currentRoute) },
                     bottomBar = { BottomNavigationBar(navController) },
                     floatingActionButton = { CreateFAB(viewModel = viewModel )},
                     floatingActionButtonPosition = FabPosition.End
@@ -176,9 +177,15 @@ class MainActivity : ComponentActivity() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun TopApplicationBar(viewModel: CreateCatViewModel) {
+    fun TopApplicationBar(viewModel: CreateCatViewModel, currentRoute: String?) {
+        val title = when (currentRoute) {
+            "home" -> "Home"
+            "search" -> "Search Cats"
+            "favorites" -> "Favorites"
+            else -> "Catbrary"
+        }
         TopAppBar(
-            title = { Text("Catbrary") },
+            title = { Text(title) },
             actions = {
                 IconButton(onClick = { viewModel.toggleEditMode() }) {
                     Icon(

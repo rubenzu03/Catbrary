@@ -88,7 +88,7 @@ fun CreateCatFABDialog(onDismiss: () -> Unit,
                         )
                     }
                     Text(
-                        "Add a new Cat",
+                        "Add a new cat",
                         style = MaterialTheme.typography.headlineMedium,
                         modifier = Modifier.padding(start = 8.dp)
                     )
