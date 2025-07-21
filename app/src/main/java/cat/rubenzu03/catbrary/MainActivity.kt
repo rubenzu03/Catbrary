@@ -19,6 +19,7 @@ import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.Icon
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -56,6 +57,9 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.Alignment
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.core.CubicBezierEasing
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,20 +84,62 @@ class MainActivity : ComponentActivity() {
                         navController = navController,
                         startDestination = "home",
                         modifier = Modifier.padding(innerPadding),
-
                         enterTransition = {
-                            fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing))
+                            slideInHorizontally(
+                                initialOffsetX = { fullWidth -> fullWidth / 4 },
+                                animationSpec = tween(
+                                    durationMillis = 320,
+                                    easing = CubicBezierEasing(0.2f, 0.0f, 0.0f, 1.0f)
+                                )
+                            ) + fadeIn(
+                                animationSpec = tween(
+                                    durationMillis = 320,
+                                    easing = CubicBezierEasing(0.2f, 0.0f, 0.0f, 1.0f)
+                                )
+                            )
                         },
                         exitTransition = {
-                            fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing))
+                            slideOutHorizontally(
+                                targetOffsetX = { fullWidth -> -fullWidth / 8 },
+                                animationSpec = tween(
+                                    durationMillis = 280,
+                                    easing = CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f)
+                                )
+                            ) + fadeOut(
+                                animationSpec = tween(
+                                    durationMillis = 280,
+                                    easing = CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f)
+                                )
+                            )
                         },
                         popEnterTransition = {
-                            fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing))
+                            slideInHorizontally(
+                                initialOffsetX = { fullWidth -> -fullWidth / 8 },
+                                animationSpec = tween(
+                                    durationMillis = 320,
+                                    easing = CubicBezierEasing(0.2f, 0.0f, 0.0f, 1.0f)
+                                )
+                            ) + fadeIn(
+                                animationSpec = tween(
+                                    durationMillis = 320,
+                                    easing = CubicBezierEasing(0.2f, 0.0f, 0.0f, 1.0f)
+                                )
+                            )
                         },
                         popExitTransition = {
-                            fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing))
+                            slideOutHorizontally(
+                                targetOffsetX = { fullWidth -> fullWidth / 4 },
+                                animationSpec = tween(
+                                    durationMillis = 280,
+                                    easing = CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f)
+                                )
+                            ) + fadeOut(
+                                animationSpec = tween(
+                                    durationMillis = 280,
+                                    easing = CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f)
+                                )
+                            )
                         }
-
                     ) {
                         composable("home") { MainScreen(viewModel = viewModel) }
                         composable("favorites") { FavoritesScreen() }
@@ -114,9 +160,11 @@ class MainActivity : ComponentActivity() {
             NavigationBarItem(
                 selected = currentRoute == "home",
                 onClick = {
-                    navController.navigate("home") {
-                        popUpTo(navController.graph.startDestinationId)
-                        launchSingleTop = true
+                    if (currentRoute != "home") {
+                        navController.navigate("home") {
+                            popUpTo(navController.graph.startDestinationId)
+                            launchSingleTop = true
+                        }
                     }
                 },
                 icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
@@ -132,9 +180,11 @@ class MainActivity : ComponentActivity() {
             NavigationBarItem(
                 selected = currentRoute == "search",
                 onClick = {
-                    navController.navigate("search") {
-                        popUpTo(navController.graph.startDestinationId)
-                        launchSingleTop = true
+                    if (currentRoute != "search") {
+                        navController.navigate("search") {
+                            popUpTo(navController.graph.startDestinationId)
+                            launchSingleTop = true
+                        }
                     }
                 },
                 icon = { Icon(Icons.Default.Search, contentDescription = "Search") },
@@ -150,9 +200,11 @@ class MainActivity : ComponentActivity() {
             /*NavigationBarItem(
                 selected = currentRoute == "favorites",
                 onClick = {
-                    navController.navigate("favorites") {
-                        popUpTo(navController.graph.startDestinationId)
-                        launchSingleTop = true
+                    if (currentRoute != "favorites") {
+                        navController.navigate("favorites") {
+                            popUpTo(navController.graph.startDestinationId)
+                            launchSingleTop = true
+                        }
                     }
                 },
                 icon = { Icon(Icons.Default.FavoriteBorder, contentDescription = "Favorites") },
