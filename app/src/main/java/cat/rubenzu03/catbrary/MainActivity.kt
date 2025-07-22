@@ -60,6 +60,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.material.icons.filled.Info
+import cat.rubenzu03.catbrary.ui.composables.BreedInfoItem
+import cat.rubenzu03.catbrary.ui.composables.CatBreedListScreen
+import cat.rubenzu03.catbrary.ui.viewmodel.CatBreedListViewModel
+import androidx.compose.runtime.collectAsState
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -144,6 +149,9 @@ class MainActivity : ComponentActivity() {
                         composable("home") { MainScreen(viewModel = viewModel) }
                         composable("favorites") { FavoritesScreen() }
                         composable("search") { SearchScreen() }
+                        composable("breeds") {
+                            BreedInfoScreen()
+                        }
                     }
                 }
             }
@@ -197,6 +205,26 @@ class MainActivity : ComponentActivity() {
                 )
             )
 
+            NavigationBarItem(
+                selected = currentRoute == "breeds",
+                onClick = {
+                    if (currentRoute != "breeds") {
+                        navController.navigate("breeds") {
+                            popUpTo(navController.graph.startDestinationId)
+                            launchSingleTop = true
+                        }
+                    }
+                },
+                icon = { Icon(Icons.Default.Info, contentDescription = "Breeds") },
+                label = { Text("Breeds") },
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                    unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                    selectedTextColor = MaterialTheme.colorScheme.primary,
+                    unselectedTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                )
+            )
+
             /*NavigationBarItem(
                 selected = currentRoute == "favorites",
                 onClick = {
@@ -224,6 +252,20 @@ class MainActivity : ComponentActivity() {
     fun BottomNavigationBarPreview() {
         val navController = rememberNavController()
         BottomNavigationBar(navController)
+    }
+
+    @Composable
+    fun BreedInfoScreen() {
+        val breedViewModel: CatBreedListViewModel = viewModel()
+        val breeds = breedViewModel.breeds.collectAsState().value
+        val loading = breedViewModel.loading.collectAsState().value
+        val error = breedViewModel.error.collectAsState().value
+        LaunchedEffect(Unit) { breedViewModel.fetchBreeds() }
+        when {
+            loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+            error != null -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("Error: $error") }
+            else -> CatBreedListScreen(breeds)
+        }
     }
 
 
