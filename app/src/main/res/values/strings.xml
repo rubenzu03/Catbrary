@@ -1,13 +1,13 @@
 <resources>
-    <string name="app_name">Catbrary</string>
+    <string name="app_name" translatable="false">Catbrary</string>
     <string name="home">Home</string>
     <string name="age">Age</string>
     <string name="breed">Breed</string>
     <string name="breeds">Breeds</string>
     <string name="search">Search</string>
     <string name="search_hint">Search cats by name…</string>
-    <string name="add_cat">Add Cat</string>
-    <string name="delete_dialog_title">Delete Cat</string>
+    <string name="add_cat">Add cat</string>
+    <string name="delete_dialog_title">Delete cat</string>
     <string name="delete_dialog_message">Are you sure you want to delete this cat? This action cannot be undone</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
