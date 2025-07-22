@@ -276,16 +276,19 @@ class MainActivity : ComponentActivity() {
             "home" -> "Home"
             "search" -> "Search Cats"
             "favorites" -> "Favorites"
+            "breeds" -> "Cat Breeds"
             else -> "Catbrary"
         }
         TopAppBar(
             title = { Text(title) },
             actions = {
-                IconButton(onClick = { viewModel.toggleEditMode() }) {
-                    Icon(
-                        imageVector = if (viewModel.isEditMode) Icons.Default.Done else Icons.Default.Edit,
-                        contentDescription = if (viewModel.isEditMode) "Done editing" else "Edit cats"
-                    )
+                if (currentRoute == "home") {
+                    IconButton(onClick = { viewModel.toggleEditMode() }) {
+                        Icon(
+                            imageVector = if (viewModel.isEditMode) Icons.Default.Done else Icons.Default.Edit,
+                            contentDescription = if (viewModel.isEditMode) "Done editing" else "Edit cats"
+                        )
+                    }
                 }
             },
             colors = TopAppBarDefaults.topAppBarColors(
