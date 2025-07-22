@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home">Inicio</string>
+    <string name="age">Edad</string>
+    <string name="breed">Raza</string>
+    <string name="breeds">Razas</string>
+    <string name="search">Buscar</string>
+    <string name="search_hint">Buscar gatos por nombre</string>
+    <string name="add_cat">Añadir gato</string>
+    <string name="delete_dialog_title">Borrar gato</string>
+    <string name="delete_dialog_message">Estás seguro que quieres borrar este gato? Esta acción no se puede revertir</string>
+    <string name="delete">Borrar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="origin">Origen</string>
+    <string name="temperament">Carácter</string>
+    <string name="description">Descripción</string>
+    <string name="adaptability">Adaptabilidad</string>
+    <string name="affection_level">Nivel de afección</string>
+    <string name="child_friendly">Apta para niños</string>
+    <string name="dog_friendly">Apta para perros</string>
+    <string name="energy_level">Nivel de energía</string>
+    <string name="grooming">Nivel de aseo</string>
+    <string name="health_issues">Problemas de salud</string>
+    <string name="intelligence">Inteligencia</string>
+    <string name="shedding_level">Nivel de caída del pelo</string>
+    <string name="social_needs">Necesidades sociales</string>
+    <string name="stranger_friendly">Apto para extraños</string>
+</resources>
