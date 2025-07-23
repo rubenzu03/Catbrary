@@ -29,6 +29,9 @@ import androidx.compose.ui.unit.dp
 import cat.rubenzu03.catbrary.domain.CatBreedInfo
 import cat.rubenzu03.catbrary.R
 import coil.compose.AsyncImage
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 
 @Composable
 fun BreedInfoItem(breed: CatBreedInfo, modifier: Modifier = Modifier) {
@@ -45,9 +48,11 @@ fun BreedInfoItem(breed: CatBreedInfo, modifier: Modifier = Modifier) {
                 contentDescription = breed.name,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(180.dp),
+                    .height(180.dp)
+                    .clip(MaterialTheme.shapes.medium),
                 placeholder = painterResource(id = R.drawable.placeholder),
-                error = painterResource(id = R.drawable.placeholder)
+                error = painterResource(id = R.drawable.placeholder),
+                contentScale = ContentScale.FillWidth // muestra toda la imagen, puede dejar bordes vacíos
             )
             Spacer(modifier = Modifier.height(8.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
