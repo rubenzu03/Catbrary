@@ -23,4 +23,5 @@ class CatBreedInfo {
 
     var wikipediaUrl: String = ""
     var ref_imageId: String = ""
+    var imageUrl: String = ""
 }

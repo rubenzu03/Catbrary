@@ -25,8 +25,34 @@ class CatBreedListViewModel(application: Application) : AndroidViewModel(applica
         api.fetchAllCatBreedsInfo(
             url = "https://api.thecatapi.com/v1/breeds",
             onSuccess = { list ->
-                _breeds.value = list
-                _loading.value = false
+                val breedsWithImages = mutableListOf<CatBreedInfo>()
+                var remaining = list.size
+                if (list.isEmpty()) {
+                    _breeds.value = list
+                    _loading.value = false
+                    return@fetchAllCatBreedsInfo
+                }
+                list.forEach { breed ->
+                    api.fetchImageUrl(breed.ref_imageId,
+                        onSuccess = { imageUrl ->
+                            breed.imageUrl = imageUrl
+                            breedsWithImages.add(breed)
+                            remaining--
+                            if (remaining == 0) {
+                                _breeds.value = breedsWithImages
+                                _loading.value = false
+                            }
+                        },
+                        onError = {
+                            breedsWithImages.add(breed)
+                            remaining--
+                            if (remaining == 0) {
+                                _breeds.value = breedsWithImages
+                                _loading.value = false
+                            }
+                        }
+                    )
+                }
             },
             onError = { err: VolleyError ->
                 _error.value = err.message
@@ -35,4 +61,3 @@ class CatBreedListViewModel(application: Application) : AndroidViewModel(applica
         )
     }
 }
-

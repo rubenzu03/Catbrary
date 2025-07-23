@@ -6,6 +6,7 @@ import coil.compose.AsyncImagePainter
 import com.android.volley.RequestQueue
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONArray
 import org.json.JSONObject
@@ -19,7 +20,7 @@ class CatBreedApiRequest(context: Context) {
         onSuccess: (List<CatBreedInfo>) -> Unit,
         onError: (VolleyError) -> Unit
     ) {
-        val request = com.android.volley.toolbox.JsonArrayRequest(
+        val request = JsonArrayRequest(
             com.android.volley.Request.Method.GET,
             url,
             null,
@@ -46,11 +47,30 @@ class CatBreedApiRequest(context: Context) {
                         socialNeeds = jsonObj.optInt("social_needs")
                         strangerFriendly = jsonObj.optInt("stranger_friendly")
                         wikipediaUrl = jsonObj.optString("wikipedia_url")
-                        ref_imageId = jsonObj.optString("ref_image_id")
+                        ref_imageId = jsonObj.optString("reference_image_id")
                     }
                     catBreeds.add(catBreed)
                 }
                 onSuccess(catBreeds)
+            },
+            { error -> onError(error) }
+        )
+        requestQueue.add(request)
+    }
+
+    fun fetchImageUrl(refImageId: String, onSuccess: (String) -> Unit, onError: (VolleyError) -> Unit) {
+        if (refImageId.isBlank()) {
+            onSuccess("")
+            return
+        }
+        val url = "https://api.thecatapi.com/v1/images/$refImageId"
+        val request = JsonObjectRequest(
+            com.android.volley.Request.Method.GET,
+            url,
+            null,
+            { response ->
+                val imageUrl = response.optString("url", "")
+                onSuccess(imageUrl)
             },
             { error -> onError(error) }
         )

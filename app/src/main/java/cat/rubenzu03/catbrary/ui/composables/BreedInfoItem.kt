@@ -23,11 +23,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cat.rubenzu03.catbrary.domain.CatBreedInfo
 import cat.rubenzu03.catbrary.R
-
+import coil.compose.AsyncImage
 
 @Composable
 fun BreedInfoItem(breed: CatBreedInfo, modifier: Modifier = Modifier) {
@@ -39,6 +40,16 @@ fun BreedInfoItem(breed: CatBreedInfo, modifier: Modifier = Modifier) {
             .clickable { expanded = !expanded }
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
+            AsyncImage(
+                model = breed.imageUrl.ifBlank { null },
+                contentDescription = breed.name,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(180.dp),
+                placeholder = painterResource(id = R.drawable.placeholder),
+                error = painterResource(id = R.drawable.placeholder)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Column {
                     Text(text = breed.name, style = MaterialTheme.typography.titleMedium)
@@ -131,7 +142,7 @@ fun BreedInfoItem(breed: CatBreedInfo, modifier: Modifier = Modifier) {
 @Composable
 fun CatBreedListScreen(breeds: List<CatBreedInfo>) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
-        items(breeds) { breed ->
+        items(breeds.filter { it.imageUrl.isNotBlank() }) { breed ->
             BreedInfoItem(breed = breed)
         }
     }
