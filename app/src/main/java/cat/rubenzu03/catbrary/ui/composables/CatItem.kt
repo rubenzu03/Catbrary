@@ -213,9 +213,3 @@ fun CatItemPreview() {
     CatItem(cat = cat, modifier = Modifier)
 }
 
-@Preview
-@Composable
-fun CatItemEditModePreview() {
-    val cat = Cat(name = "Shadow", age = 5, breed = CatBreeds.Maine_Coon, image = "")
-    CatItem(cat = cat, modifier = Modifier, isEditMode = true, onDeleteCat = {})
-}

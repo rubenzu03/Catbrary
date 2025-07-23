@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import cat.rubenzu03.catbrary.api.CatBreedApiRequest
 import cat.rubenzu03.catbrary.domain.CatBreedInfo
 import com.android.volley.VolleyError
+import cat.rubenzu03.catbrary.persistence.AppDatabase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -19,8 +21,23 @@ class CatBreedListViewModel(application: Application) : AndroidViewModel(applica
     val error: StateFlow<String?> = _error
 
     private val api = CatBreedApiRequest(application)
+    private val db = AppDatabase.getDatabase(application)
+    private val breedDao = db.catBreedInfoDao()
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            val localBreeds = breedDao.getAllBreeds()
+            if (localBreeds.isNotEmpty()) {
+                _breeds.value = localBreeds
+            }
+        }
+    }
 
     fun fetchBreeds() {
+        // Solo hace fetch si no hay datos y no hay error
+        if (_breeds.value.isNotEmpty() || _error.value != null) {
+            return
+        }
         _loading.value = true
         api.fetchAllCatBreedsInfo(
             url = "https://api.thecatapi.com/v1/breeds",
@@ -33,22 +50,30 @@ class CatBreedListViewModel(application: Application) : AndroidViewModel(applica
                     return@fetchAllCatBreedsInfo
                 }
                 list.forEach { breed ->
-                    api.fetchImageUrl(breed.ref_imageId,
+                    api.fetchImageUrl(breed.refImageid,
                         onSuccess = { imageUrl ->
-                            breed.imageUrl = imageUrl
-                            breedsWithImages.add(breed)
+                            val breedWithImage = breed.copy(imageUrl = imageUrl)
+                            breedsWithImages.add(breedWithImage)
                             remaining--
                             if (remaining == 0) {
-                                _breeds.value = breedsWithImages
-                                _loading.value = false
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    breedDao.clearAll()
+                                    breedDao.insertAll(breedsWithImages)
+                                    _breeds.value = breedsWithImages
+                                    _loading.value = false
+                                }
                             }
                         },
                         onError = {
                             breedsWithImages.add(breed)
                             remaining--
                             if (remaining == 0) {
-                                _breeds.value = breedsWithImages
-                                _loading.value = false
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    breedDao.clearAll()
+                                    breedDao.insertAll(breedsWithImages)
+                                    _breeds.value = breedsWithImages
+                                    _loading.value = false
+                                }
                             }
                         }
                     )
