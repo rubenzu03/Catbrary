@@ -21,11 +21,11 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "cat.rubenzu03.catbrary"
+        applicationId = "com.rubenzu03.catbrary"
         minSdk = 31
         targetSdk = 36
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
