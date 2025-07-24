@@ -381,7 +381,7 @@ class MainActivity : ComponentActivity() {
                         .padding(top = 16.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("Enter a cat name to search")
+                    Text(stringResource(R.string.search_hint))
                 }
             }
         }

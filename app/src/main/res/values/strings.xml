@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name" translatable="false">Catbrary</string>
     <string name="age">Age</string>
     <string name="breed">Breed</string>
@@ -31,4 +31,22 @@
     <string name="home_topbar">Home</string>
     <string name="search_topbar">Search cats</string>
     <string name="breeds_topbar">Breeds</string>
+
+    <string name="cat_dialog_title">Add a new cat</string>
+    <string name="cat_dialog_name_label">Cat Name</string>
+    <string name="cat_dialog_age_label">Cat Age</string>
+    <string name="cat_dialog_name_hint">Enter the name of your cat</string>
+    <string name="cat_dialog_age_hint">Enter the age of your cat</string>
+    <string name="cat_dialog_photo_hint">Tap to add photo</string>
+    <string name="cat_dialog_breed_label">Cat Breed</string>
+    <string name="cat_dialog_breed_hint">Select a breed</string>
+    <string name="cat_dialog_cat_photo_text">Cat photo</string>
+    <string name="cat_dialog_cat_photo_hint">Select a photo for the cat entry</string>
+    <string name="save_button">Save</string>
+
+    <string name="cat_item_age">Age:</string>
+    <string name="cat_item_breed">Breed:</string>
+    <string name="cat_item_year">year</string>
+    <string name="cat_item_years">years</string>
+    <string name="cat_item_old" tools:ignore="MissingTranslation">old</string>
 </resources>

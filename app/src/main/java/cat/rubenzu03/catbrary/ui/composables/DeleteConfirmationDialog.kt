@@ -9,8 +9,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.DialogProperties
+import cat.rubenzu03.catbrary.R
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -23,19 +25,19 @@ fun DeleteConfirmationDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text("Delete Item")
+            Text(stringResource(R.string.delete_dialog_title))
         },
         text = {
-            Text("Are you sure you want to delete this cat? This action cannot be undone.")
+            Text(stringResource(R.string.delete_dialog_message))
         },
         confirmButton = {
             TextButton(onClick = onConfirm) {
-                Text("Delete")
+                Text(stringResource(R.string.delete))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         },
         modifier = modifier

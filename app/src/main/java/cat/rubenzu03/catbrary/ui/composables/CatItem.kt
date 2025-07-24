@@ -15,12 +15,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cat.rubenzu03.catbrary.domain.Cat
 import cat.rubenzu03.catbrary.domain.CatBreeds
 import coil.compose.AsyncImage
+
+import cat.rubenzu03.catbrary.R
+
 
 @Composable
 fun CatItem(cat: Cat, modifier: Modifier, isEditMode: Boolean = false, onDeleteCat: (Cat) -> Unit = {}){
@@ -93,7 +97,7 @@ fun CatItem(cat: Cat, modifier: Modifier, isEditMode: Boolean = false, onDeleteC
                             }
                         } else if (!isExpanded) {
                             Text(
-                                "Age: ${cat.age}",
+                                stringResource(R.string.cat_item_age) + "${cat.age}",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -137,13 +141,13 @@ fun CatItem(cat: Cat, modifier: Modifier, isEditMode: Boolean = false, onDeleteC
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            "Age:",
+                            stringResource(R.string.cat_item_age),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.primary
                         )
                         Text(
-                            "${cat.age} ${if (cat.age == 1) "year" else "years"} old",
+                            "${cat.age} ${if (cat.age == 1) stringResource(R.string.cat_item_year) else stringResource(R.string.cat_item_years)} " + stringResource(R.string.cat_item_old),
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -157,7 +161,7 @@ fun CatItem(cat: Cat, modifier: Modifier, isEditMode: Boolean = false, onDeleteC
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            "Breed:",
+                            stringResource(R.string.cat_item_breed),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.primary

@@ -29,20 +29,23 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import cat.rubenzu03.catbrary.R
 import cat.rubenzu03.catbrary.domain.CatBreeds
 import cat.rubenzu03.catbrary.ui.viewmodel.CreateCatViewModel
 import coil.compose.AsyncImage
+
+import androidx.compose.material3.*
 
 
 @Composable
@@ -88,7 +91,7 @@ fun CreateCatFABDialog(onDismiss: () -> Unit,
                         )
                     }
                     Text(
-                        "Add a new cat",
+                        stringResource(R.string.cat_dialog_title),
                         style = MaterialTheme.typography.headlineMedium,
                         modifier = Modifier.padding(start = 8.dp)
                     )
@@ -97,8 +100,8 @@ fun CreateCatFABDialog(onDismiss: () -> Unit,
                 LabeledTextField(
                     value = name,
                     onValueChange = { viewModel.name = it },
-                    label = "Cat Name",
-                    placeholder = "Enter the name of your cat",
+                    label = stringResource(R.string.cat_dialog_name_label),
+                    placeholder = stringResource(R.string.cat_dialog_name_hint),
                     modifier = Modifier.fillMaxWidth(),
                 )
 
@@ -106,17 +109,17 @@ fun CreateCatFABDialog(onDismiss: () -> Unit,
                     options = CatBreeds.entries,
                     selectedOption = selectedBreed,
                     onOptionSelected = { viewModel.selectedBreed = it },
-                    label = "Cat Breed",
+                    label = stringResource(R.string.cat_dialog_breed_label),
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = "Select a breed",
+                    placeholder = stringResource(R.string.cat_dialog_name_label),
                     optionToString = { it.name.replace('_', ' ').lowercase().replaceFirstChar { it.uppercase() } }
                 )
 
                 LabeledTextField(
                     value = age,
                     onValueChange = { viewModel.age = it },
-                    label = "Cat Age",
-                    placeholder = "Enter the age of your cat",
+                    label = stringResource(R.string.cat_dialog_age_label),
+                    placeholder = stringResource(R.string.cat_dialog_age_hint),
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Number
@@ -126,7 +129,7 @@ fun CreateCatFABDialog(onDismiss: () -> Unit,
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    "Cat Photo",
+                    stringResource(R.string.cat_dialog_cat_photo_text),
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
@@ -171,7 +174,7 @@ fun CreateCatFABDialog(onDismiss: () -> Unit,
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                "Tap to add photo",
+                                stringResource(R.string.cat_dialog_cat_photo_hint),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -196,6 +199,16 @@ fun CreateCatFABDialog(onDismiss: () -> Unit,
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
+
+                if (viewModel.errorMessage != null) {
+                    Text(
+                        text = viewModel.errorMessage ?: "",
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
+
                 Spacer(modifier = Modifier.weight(1f))
 
                 Box(
@@ -206,10 +219,12 @@ fun CreateCatFABDialog(onDismiss: () -> Unit,
                 ) {
                     SaveFillButton(
                         onClick = {
-                            viewModel.saveCat()
-                            onDismiss()
-                                  },
-                        modifier = Modifier.width(200.dp).height(60.dp)
+                            if (viewModel.saveCat()) {
+                                onDismiss()
+                            }
+                        },
+                        modifier = Modifier.width(200.dp).height(60.dp),
+                        enabled = viewModel.isValid()
                     )
                 }
 
