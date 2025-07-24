@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -77,10 +78,11 @@ fun CreateCatFABDialog(onDismiss: () -> Unit,
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .widthIn(min = 350.dp, max = 600.dp)
                     .wrapContentHeight()
                     .padding(12.dp)
                     .padding(WindowInsets.navigationBars.asPaddingValues())
-                    .heightIn(max = 600.dp)
+                    .heightIn(max = 800.dp)
                     .verticalScroll(rememberScrollState())
             ) {
                 Row(
