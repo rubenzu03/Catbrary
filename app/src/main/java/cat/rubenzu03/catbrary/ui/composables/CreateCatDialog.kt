@@ -5,6 +5,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -62,6 +63,8 @@ fun CreateCatFABDialog(onDismiss: () -> Unit,
     ) { uri: Uri? ->
         viewModel.imageUri = uri
     }
+
+    remember { viewModel.clearFields() }
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -211,19 +214,31 @@ fun CreateCatFABDialog(onDismiss: () -> Unit,
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                Box(
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 24.dp),
-                    contentAlignment = Alignment.Center
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
+                    Button(
+                        onClick = { viewModel.clearFields() },
+                        modifier = Modifier
+                            .width(200.dp)
+                            .height(60.dp)
+                    ) {
+                        Text(stringResource(R.string.clear_button))
+                    }
+                    Spacer(modifier = Modifier.width(16.dp))
                     SaveFillButton(
                         onClick = {
                             if (viewModel.saveCat()) {
                                 onDismiss()
                             }
                         },
-                        modifier = Modifier.width(200.dp).height(60.dp),
+                        modifier = Modifier
+                            .width(200.dp)
+                            .height(60.dp),
                         enabled = viewModel.isValid()
                     )
                 }

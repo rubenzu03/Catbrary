@@ -29,6 +29,14 @@ class CreateCatViewModel(private val repo: CatRepository, private val context: C
 
     var errorMessageResId by mutableStateOf<Int?>(null)
 
+    fun clearFields() {
+        name = ""
+        age = ""
+        selectedBreed = null
+        imageUri = null
+        errorMessageResId = null
+    }
+
     private fun saveImageToInternalStorage(uri: Uri): String? {
         return try {
             val inputStream = context.contentResolver.openInputStream(uri)

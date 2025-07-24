@@ -46,5 +46,6 @@
     <string name="cat_item_year">año</string>
     <string name="cat_item_years">años</string>
     <string name="cat_item_old">" "</string>
+    <string name="clear_button">Limpiar</string>
     <string name="cat_dialog_empty_error">Al menos un campo debe estar lleno</string>
 </resources>

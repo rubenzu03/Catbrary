@@ -43,6 +43,7 @@
     <string name="cat_dialog_cat_photo_text">Cat photo</string>
     <string name="cat_dialog_cat_photo_hint">Select a photo for the cat entry</string>
     <string name="save_button">Save</string>
+    <string name="clear_button">Clear</string>
     <string name="cat_dialog_empty_error">At least, a field needs a value</string>
     <string name="cat_dialog_name_error">Age must be a number and greater than 0</string>
 
@@ -51,6 +52,5 @@
     <string name="cat_item_year">year</string>
     <string name="cat_item_years">years</string>
     <string name="cat_item_old" tools:ignore="MissingTranslation">old</string>
-
 
 </resources>
