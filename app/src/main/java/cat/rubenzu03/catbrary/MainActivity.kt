@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -19,7 +18,6 @@ import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.Icon
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -61,10 +59,10 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.material.icons.filled.Info
-import cat.rubenzu03.catbrary.ui.composables.BreedInfoItem
 import cat.rubenzu03.catbrary.ui.composables.CatBreedListScreen
 import cat.rubenzu03.catbrary.ui.viewmodel.CatBreedListViewModel
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.res.stringResource
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -176,7 +174,7 @@ class MainActivity : ComponentActivity() {
                     }
                 },
                 icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
-                label = { Text("Home") },
+                label = { Text(stringResource(R.string.home_bottombar)) },
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = MaterialTheme.colorScheme.primary,
                     unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
@@ -196,7 +194,7 @@ class MainActivity : ComponentActivity() {
                     }
                 },
                 icon = { Icon(Icons.Default.Search, contentDescription = "Search") },
-                label = { Text("Search") },
+                label = { Text(stringResource(R.string.search_bottombar)) },
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = MaterialTheme.colorScheme.primary,
                     unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
@@ -216,7 +214,7 @@ class MainActivity : ComponentActivity() {
                     }
                 },
                 icon = { Icon(Icons.Default.Info, contentDescription = "Breeds") },
-                label = { Text("Breeds") },
+                label = { Text(stringResource(R.string.breeds_bottombar)) },
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = MaterialTheme.colorScheme.primary,
                     unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
@@ -273,11 +271,10 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun TopApplicationBar(viewModel: CreateCatViewModel, currentRoute: String?) {
         val title = when (currentRoute) {
-            "home" -> "Home"
-            "search" -> "Search Cats"
-            "favorites" -> "Favorites"
-            "breeds" -> "Cat Breeds"
-            else -> "Catbrary"
+            "home" -> stringResource(R.string.home_bottombar)
+            "search" -> stringResource(R.string.search_topbar)
+            "breeds" -> stringResource(R.string.breeds_topbar)
+            else -> stringResource(R.string.app_name)
         }
         TopAppBar(
             title = { Text(title) },
@@ -347,7 +344,7 @@ class MainActivity : ComponentActivity() {
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { newQuery -> searchViewModel.updateSearchQuery(newQuery) },
-                label = { Text("Search cats by name...") },
+                label = { Text(stringResource(R.string.search_hint)) },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search") },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -368,7 +365,7 @@ class MainActivity : ComponentActivity() {
                         .padding(top = 16.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("No cats found matching \"$searchQuery\"")
+                    Text(stringResource(R.string.search_no_results) + "\"$searchQuery\"")
                 }
             } else if (searchResults.isNotEmpty()) {
                 CatList(

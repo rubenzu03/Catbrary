@@ -1,11 +1,9 @@
 <resources>
     <string name="app_name" translatable="false">Catbrary</string>
-    <string name="home">Home</string>
     <string name="age">Age</string>
     <string name="breed">Breed</string>
-    <string name="breeds">Breeds</string>
-    <string name="search">Search</string>
     <string name="search_hint">Search cats by name…</string>
+    <string name="search_no_results">No cats found matching</string>
     <string name="add_cat">Add cat</string>
     <string name="delete_dialog_title">Delete cat</string>
     <string name="delete_dialog_message">Are you sure you want to delete this cat? This action cannot be undone</string>
@@ -25,4 +23,12 @@
     <string name="shedding_level">Shedding Level</string>
     <string name="social_needs">Social Needs</string>
     <string name="stranger_friendly">Stranger Friendly</string>
+
+    <string name="home_bottombar">Home</string>
+    <string name="search_bottombar">Search</string>
+    <string name="breeds_bottombar">Breeds</string>
+
+    <string name="home_topbar">Home</string>
+    <string name="search_topbar">Search cats</string>
+    <string name="breeds_topbar">Breeds</string>
 </resources>

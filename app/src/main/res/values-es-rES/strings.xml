@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="home">Inicio</string>
+    <string name="home_bottombar">Inicio</string>
     <string name="age">Edad</string>
     <string name="breed">Raza</string>
-    <string name="breeds">Razas</string>
-    <string name="search">Buscar</string>
+    <string name="breeds_bottombar">Razas</string>
+    <string name="search_bottombar">Buscar</string>
     <string name="search_hint">Buscar gatos por nombre</string>
+    <string name="search_no_results">"No se han encontrado gatos con la búsqueda "</string>
     <string name="add_cat">Añadir gato</string>
     <string name="delete_dialog_title">Borrar gato</string>
     <string name="delete_dialog_message">Estás seguro que quieres borrar este gato? Esta acción no se puede revertir</string>
@@ -25,4 +26,7 @@
     <string name="shedding_level">Nivel de caída del pelo</string>
     <string name="social_needs">Necesidades sociales</string>
     <string name="stranger_friendly">Apto para extraños</string>
+    <string name="home_topbar">Inicio</string>
+    <string name="search_topbar">Buscar gatos</string>
+    <string name="breeds_topbar">Razas</string>
 </resources>
