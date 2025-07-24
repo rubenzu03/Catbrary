@@ -1,7 +1,6 @@
 # Catbrary
 
-An app to keep track of the cats you have at home or the ones you find around!
-
+An app for keeping track of the cats you see around, and for getting info about multiple cat breeds
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 ![Kotlin](https://img.shields.io/badge/-Kotlin-7F52FF?logo=kotlin&logoColor=white)
@@ -11,8 +10,9 @@ An app to keep track of the cats you have at home or the ones you find around!
 
 ## Features
 
-- Made using Material You colors and Material 3 guidelines
-
+- Material 3 Design
+- Cat breeds info
+- Info about cat breeds
 
 ## Screenshots
 
@@ -25,7 +25,3 @@ An app to keep track of the cats you have at home or the ones you find around!
 - Install the .apk file
 - **NOTE:** Android 12+ required
     
-## Roadmap
-- Favorites tab
-- Cat photos
-- Cat of the day
