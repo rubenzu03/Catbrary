@@ -112,7 +112,7 @@ fun CreateCatFABDialog(onDismiss: () -> Unit,
                     label = stringResource(R.string.cat_dialog_breed_label),
                     modifier = Modifier.fillMaxWidth(),
                     placeholder = stringResource(R.string.cat_dialog_name_label),
-                    optionToString = { it.name.replace('_', ' ').lowercase().replaceFirstChar { it.uppercase() } }
+                    optionToString = { it.displayName }
                 )
 
                 LabeledTextField(

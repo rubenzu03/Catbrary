@@ -77,7 +77,7 @@ fun CatItem(cat: Cat, modifier: Modifier, isEditMode: Boolean = false, onDeleteC
                 },
                 supportingContent = {
                     Text(
-                        cat.breed.name.replace('_', ' ').lowercase().replaceFirstChar { it.uppercase() },
+                        cat.breed.displayName,
                         style = if (isExpanded) MaterialTheme.typography.titleMedium else MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -167,7 +167,7 @@ fun CatItem(cat: Cat, modifier: Modifier, isEditMode: Boolean = false, onDeleteC
                             color = MaterialTheme.colorScheme.primary
                         )
                         Text(
-                            cat.breed.name.replace('_', ' ').lowercase().replaceFirstChar { it.uppercase() },
+                            cat.breed.displayName,
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -216,4 +216,3 @@ fun CatItemPreview() {
     val cat = Cat(name = "Whiskers", age = 3, breed = CatBreeds.Siamese, image = "https://cdn2.thecatapi.com/images/0XYvRd7oD.jpg")
     CatItem(cat = cat, modifier = Modifier)
 }
-
