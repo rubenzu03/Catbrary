@@ -27,6 +27,8 @@ class CreateCatViewModel(private val repo: CatRepository, private val context: C
     var isEditMode by mutableStateOf(false)
         private set
 
+    var errorMessage by mutableStateOf<String?>(null)
+
     private fun saveImageToInternalStorage(uri: Uri): String? {
         return try {
             val inputStream = context.contentResolver.openInputStream(uri)
@@ -46,7 +48,24 @@ class CreateCatViewModel(private val repo: CatRepository, private val context: C
         }
     }
 
-    fun saveCat() {
+    fun isValid(): Boolean {
+        if (name.isNotBlank() || age.isNotBlank() || selectedBreed != null || imageUri != null) {
+            if (age.isNotBlank()) {
+                val ageInt = age.toIntOrNull()
+                if (ageInt == null || ageInt <= 0) {
+                    errorMessage = "La edad debe ser un número mayor que 0."
+                    return false
+                }
+            }
+            errorMessage = null
+            return true
+        }
+        errorMessage = "Al menos un campo debe estar lleno."
+        return false
+    }
+
+    fun saveCat(): Boolean {
+        if (!isValid()) return false
         val catName = name.trim()
         val catAge = age.toIntOrNull() ?: 0
         val catBreed = selectedBreed ?: CatBreeds.NONE
@@ -61,6 +80,7 @@ class CreateCatViewModel(private val repo: CatRepository, private val context: C
             loadAllCats()
             clearForm()
         }
+        return true
     }
 
     fun clearForm() {
