@@ -9,7 +9,7 @@
     <string name="search_no_results">"No se han encontrado gatos con la búsqueda "</string>
     <string name="add_cat">Añadir gato</string>
     <string name="delete_dialog_title">Borrar gato</string>
-    <string name="delete_dialog_message">Estás seguro que quieres borrar este gato? Esta acción no se puede revertir</string>
+    <string name="delete_dialog_message">¿Estás seguro que quieres borrar este gato? Esta acción no se puede revertir</string>
     <string name="delete">Borrar</string>
     <string name="cancel">Cancelar</string>
     <string name="origin">Origen</string>
@@ -29,4 +29,20 @@
     <string name="home_topbar">Inicio</string>
     <string name="search_topbar">Buscar gatos</string>
     <string name="breeds_topbar">Razas</string>
+    <string name="cat_dialog_title">Añadir un nuevo gato</string>
+    <string name="cat_dialog_name_label">Nombre del gato</string>
+    <string name="cat_dialog_age_label">Edad del gato</string>
+    <string name="cat_dialog_name_hint">Introduce el nombre de tu gato</string>
+    <string name="cat_dialog_age_hint">Introduce la edad de tu gato</string>
+    <string name="cat_dialog_photo_hint">Toca para añadir una foto</string>
+    <string name="cat_dialog_breed_label">Raza del gato</string>
+    <string name="cat_dialog_breed_hint">Selecciona una raza</string>
+    <string name="cat_dialog_cat_photo_text">Foto del gato</string>
+    <string name="cat_dialog_cat_photo_hint">Selecciona una foto para el gato</string>
+    <string name="save_button">Guardar</string>
+    <string name="cat_item_age">Edad:</string>
+    <string name="cat_item_breed">Raza:</string>
+    <string name="cat_item_year">año</string>
+    <string name="cat_item_years">años</string>
+    <string name="cat_item_old">" "</string>
 </resources>
