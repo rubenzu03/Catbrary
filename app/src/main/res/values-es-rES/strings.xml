@@ -40,9 +40,11 @@
     <string name="cat_dialog_cat_photo_text">Foto del gato</string>
     <string name="cat_dialog_cat_photo_hint">Selecciona una foto para el gato</string>
     <string name="save_button">Guardar</string>
+    <string name="cat_dialog_name_error">La edad debe ser un número mayor que 0</string>
     <string name="cat_item_age">Edad:</string>
     <string name="cat_item_breed">Raza:</string>
     <string name="cat_item_year">año</string>
     <string name="cat_item_years">años</string>
     <string name="cat_item_old">" "</string>
+    <string name="cat_dialog_empty_error">Al menos un campo debe estar lleno</string>
 </resources>

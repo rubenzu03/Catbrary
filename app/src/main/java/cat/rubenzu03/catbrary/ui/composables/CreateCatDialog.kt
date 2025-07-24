@@ -200,9 +200,9 @@ fun CreateCatFABDialog(onDismiss: () -> Unit,
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                if (viewModel.errorMessage != null) {
+                if (viewModel.errorMessageResId != null) {
                     Text(
-                        text = viewModel.errorMessage ?: "",
+                        text = stringResource(id = viewModel.errorMessageResId!!),
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(bottom = 8.dp)

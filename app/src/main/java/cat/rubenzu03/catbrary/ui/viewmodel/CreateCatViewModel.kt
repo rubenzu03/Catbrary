@@ -27,7 +27,7 @@ class CreateCatViewModel(private val repo: CatRepository, private val context: C
     var isEditMode by mutableStateOf(false)
         private set
 
-    var errorMessage by mutableStateOf<String?>(null)
+    var errorMessageResId by mutableStateOf<Int?>(null)
 
     private fun saveImageToInternalStorage(uri: Uri): String? {
         return try {
@@ -53,14 +53,14 @@ class CreateCatViewModel(private val repo: CatRepository, private val context: C
             if (age.isNotBlank()) {
                 val ageInt = age.toIntOrNull()
                 if (ageInt == null || ageInt <= 0) {
-                    errorMessage = "La edad debe ser un número mayor que 0."
+                    errorMessageResId = cat.rubenzu03.catbrary.R.string.cat_dialog_name_error
                     return false
                 }
             }
-            errorMessage = null
+            errorMessageResId = null
             return true
         }
-        errorMessage = "Al menos un campo debe estar lleno."
+        errorMessageResId = cat.rubenzu03.catbrary.R.string.cat_dialog_empty_error
         return false
     }
 
