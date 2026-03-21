@@ -84,6 +84,6 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     implementation("io.coil-kt:coil-compose:2.7.0")
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
-    ksp("androidx.room:room-compiler:2.7.2")
+    ksp("androidx.room:room-compiler:2.8.4")
 
 }
