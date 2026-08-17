@@ -23,13 +23,20 @@ import cat.rubenzu03.catbrary.ui.theme.CatbraryTheme
 
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationRail
+import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.ExpandedDockedSearchBar
+import androidx.compose.material3.ExpandedFullScreenSearchBar
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.rememberSearchBarState
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -53,6 +60,7 @@ import cat.rubenzu03.catbrary.ui.viewmodel.CreateCatViewModelFactory
 import cat.rubenzu03.catbrary.ui.viewmodel.SearchViewModel
 import cat.rubenzu03.catbrary.ui.viewmodel.SearchViewModelFactory
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.CircularProgressIndicator
@@ -73,6 +81,7 @@ private sealed interface BreedContent {
 }
 
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -85,14 +94,6 @@ class MainActivity : ComponentActivity() {
             CatbraryTheme {
                 val navController = rememberNavController()
                 val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-                val motionScheme = MaterialTheme.motionScheme
-                val fadeThroughEnter = remember(motionScheme) {
-                    fadeIn(animationSpec = motionScheme.defaultEffectsSpec()) +
-                        scaleIn(initialScale = 0.92f, animationSpec = motionScheme.defaultSpatialSpec())
-                }
-                val fadeThroughExit = remember(motionScheme) {
-                    fadeOut(animationSpec = motionScheme.fastEffectsSpec())
-                }
                 val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
                     canScroll = { currentRoute == "home" || currentRoute == "breeds" }
                 )
@@ -100,29 +101,36 @@ class MainActivity : ComponentActivity() {
                     topAppBarScrollBehavior.state.heightOffset = 0f
                     topAppBarScrollBehavior.state.contentOffset = 0f
                 }
-                Scaffold(
-                    topBar = { TopApplicationBar(viewModel, currentRoute, topAppBarScrollBehavior) },
-                    bottomBar = { BottomNavigationBar(navController) },
-                    floatingActionButton = { CreateFAB(viewModel = viewModel )},
-                    floatingActionButtonPosition = FabPosition.End
-                ) { innerPadding ->
-                    NavHost(
-                        navController = navController,
-                        startDestination = "home",
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
-                        enterTransition = { fadeThroughEnter },
-                        exitTransition = { fadeThroughExit },
-                        popEnterTransition = { fadeThroughEnter },
-                        popExitTransition = { fadeThroughExit }
-                    ) {
-                        composable("home") { MainScreen(viewModel = viewModel) }
-                        composable("favorites") { FavoritesScreen() }
-                        composable("search") { SearchScreen() }
-                        composable("breeds") {
-                            BreedInfoScreen()
+val windowSizeClass = calculateWindowSizeClass(this@MainActivity)
+                if (windowSizeClass.widthSizeClass >= WindowWidthSizeClass.Medium) {
+                    Row(modifier = Modifier.fillMaxSize()) {
+                        AppNavigationRail(navController, currentRoute)
+                        Scaffold(
+                            topBar = { TopApplicationBar(viewModel, currentRoute, topAppBarScrollBehavior) },
+                            floatingActionButton = { CreateFAB(viewModel = viewModel) },
+                            floatingActionButtonPosition = FabPosition.End
+                        ) { innerPadding ->
+                            CatbraryNavHost(
+                                navController = navController,
+                                modifier = Modifier.padding(innerPadding),
+                                viewModel = viewModel,
+                                scrollBehavior = topAppBarScrollBehavior
+                            )
                         }
+                    }
+                } else {
+                    Scaffold(
+                        topBar = { TopApplicationBar(viewModel, currentRoute, topAppBarScrollBehavior) },
+                        bottomBar = { BottomNavigationBar(navController) },
+                        floatingActionButton = { CreateFAB(viewModel = viewModel) },
+                        floatingActionButtonPosition = FabPosition.End
+                    ) { innerPadding ->
+                        CatbraryNavHost(
+                            navController = navController,
+                            modifier = Modifier.padding(innerPadding),
+                            viewModel = viewModel,
+                            scrollBehavior = topAppBarScrollBehavior
+                        )
                     }
                 }
             }
@@ -177,6 +185,20 @@ class MainActivity : ComponentActivity() {
                 icon = { Icon(painterResource(R.drawable.ic_info), contentDescription = "Breeds") },
                 label = { Text(stringResource(R.string.breeds_bottombar)) }
             )
+
+            NavigationBarItem(
+                selected = currentRoute == "favorites",
+                onClick = {
+                    if (currentRoute != "favorites") {
+                        navController.navigate("favorites") {
+                            popUpTo(navController.graph.startDestinationId)
+                            launchSingleTop = true
+                        }
+                    }
+                },
+                icon = { Icon(painterResource(R.drawable.ic_favorite), contentDescription = "Favorites") },
+                label = { Text(stringResource(R.string.favorites_bottombar)) }
+            )
         }
     }
 
@@ -185,6 +207,101 @@ class MainActivity : ComponentActivity() {
     fun BottomNavigationBarPreview() {
         val navController = rememberNavController()
         BottomNavigationBar(navController)
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    private fun AppNavigationRail(navController: NavHostController, currentRoute: String?) {
+        NavigationRail {
+            NavigationRailItem(
+                selected = currentRoute == "home",
+                onClick = {
+                    if (currentRoute != "home") {
+                        navController.navigate("home") {
+                            popUpTo(navController.graph.startDestinationId)
+                            launchSingleTop = true
+                        }
+                    }
+                },
+                icon = { Icon(painterResource(R.drawable.ic_home), contentDescription = "Home") },
+                label = { Text(stringResource(R.string.home_bottombar)) }
+            )
+
+            NavigationRailItem(
+                selected = currentRoute == "search",
+                onClick = {
+                    if (currentRoute != "search") {
+                        navController.navigate("search") {
+                            popUpTo(navController.graph.startDestinationId)
+                            launchSingleTop = true
+                        }
+                    }
+                },
+                icon = { Icon(painterResource(R.drawable.ic_search), contentDescription = "Search") },
+                label = { Text(stringResource(R.string.search_bottombar)) }
+            )
+
+            NavigationRailItem(
+                selected = currentRoute == "breeds",
+                onClick = {
+                    if (currentRoute != "breeds") {
+                        navController.navigate("breeds") {
+                            popUpTo(navController.graph.startDestinationId)
+                            launchSingleTop = true
+                        }
+                    }
+                },
+                icon = { Icon(painterResource(R.drawable.ic_info), contentDescription = "Breeds") },
+                label = { Text(stringResource(R.string.breeds_bottombar)) }
+            )
+
+            NavigationRailItem(
+                selected = currentRoute == "favorites",
+                onClick = {
+                    if (currentRoute != "favorites") {
+                        navController.navigate("favorites") {
+                            popUpTo(navController.graph.startDestinationId)
+                            launchSingleTop = true
+                        }
+                    }
+                },
+                icon = { Icon(painterResource(R.drawable.ic_favorite), contentDescription = "Favorites") },
+                label = { Text(stringResource(R.string.favorites_bottombar)) }
+            )
+        }
+    }
+
+    @Composable
+    private fun CatbraryNavHost(
+        navController: NavHostController,
+        modifier: Modifier,
+        viewModel: CreateCatViewModel,
+        scrollBehavior: TopAppBarScrollBehavior
+    ) {
+        val motionScheme = MaterialTheme.motionScheme
+        val fadeThroughEnter = remember(motionScheme) {
+            fadeIn(animationSpec = motionScheme.defaultEffectsSpec()) +
+                scaleIn(initialScale = 0.92f, animationSpec = motionScheme.defaultSpatialSpec())
+        }
+        val fadeThroughExit = remember(motionScheme) {
+            fadeOut(animationSpec = motionScheme.fastEffectsSpec())
+        }
+        NavHost(
+            navController = navController,
+            startDestination = "home",
+            modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            enterTransition = { fadeThroughEnter },
+            exitTransition = { fadeThroughExit },
+            popEnterTransition = { fadeThroughEnter },
+            popExitTransition = { fadeThroughExit }
+        ) {
+            composable("home") { MainScreen(viewModel = viewModel) }
+            composable("favorites") { FavoritesScreen(viewModel = viewModel) }
+            composable("search") { SearchScreen() }
+            composable("breeds") {
+                BreedInfoScreen()
+            }
+        }
     }
 
     @Composable
@@ -239,6 +356,7 @@ class MainActivity : ComponentActivity() {
             "home" -> stringResource(R.string.home_bottombar)
             "search" -> stringResource(R.string.search_topbar)
             "breeds" -> stringResource(R.string.breeds_topbar)
+            "favorites" -> stringResource(R.string.favorites_topbar)
             else -> stringResource(R.string.app_name)
         }
         LargeFlexibleTopAppBar(
@@ -270,20 +388,40 @@ class MainActivity : ComponentActivity() {
             cats = cats,
             modifier = modifier,
             isEditMode = viewModel.isEditMode,
-            onDeleteCat = { cat -> viewModel.deleteCat(cat) }
+            onDeleteCat = { cat -> viewModel.deleteCat(cat) },
+            onToggleFavorite = { cat -> viewModel.toggleFavorite(cat) }
         )
     }
 
 
     @Composable
-    fun FavoritesScreen(modifier: Modifier = Modifier) {
-        Text(
-            text = "Favorites Screen",
-            modifier = modifier.padding(16.dp)
-        )
+    fun FavoritesScreen(modifier: Modifier = Modifier, viewModel: CreateCatViewModel) {
+        LaunchedEffect(Unit) {
+            viewModel.loadFavoriteCats()
+        }
+        val favoriteCats = viewModel.favoriteCats
+
+        if (favoriteCats.isEmpty()) {
+            Box(
+                modifier = modifier.fillMaxSize().padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = stringResource(R.string.favorites_empty),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        } else {
+            CatList(
+                cats = favoriteCats,
+                modifier = modifier,
+                onToggleFavorite = { cat -> viewModel.toggleFavorite(cat) }
+            )
+        }
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
+    @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3WindowSizeClassApi::class)
     @Composable
     fun SearchScreen(modifier: Modifier = Modifier) {
         val context = LocalContext.current
@@ -331,11 +469,7 @@ class MainActivity : ComponentActivity() {
             )
         }
 
-        ExpandedDockedSearchBar(
-            state = searchBarState,
-            inputField = inputField,
-            modifier = Modifier.padding(16.dp)
-        ) {
+        val expandedContent: @Composable ColumnScope.() -> Unit = {
             when {
                 isSearching -> {
                     Box(
@@ -382,6 +516,23 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
+        }
+
+        val windowSizeClass = calculateWindowSizeClass(this@MainActivity)
+        if (windowSizeClass.widthSizeClass >= WindowWidthSizeClass.Medium) {
+            ExpandedDockedSearchBar(
+                state = searchBarState,
+                inputField = inputField,
+                modifier = Modifier.padding(16.dp),
+                content = expandedContent
+            )
+        } else {
+            ExpandedFullScreenSearchBar(
+                state = searchBarState,
+                inputField = inputField,
+                modifier = Modifier.padding(16.dp),
+                content = expandedContent
+            )
         }
     }
 }

@@ -27,10 +27,14 @@
     <string name="home_bottombar">Home</string>
     <string name="search_bottombar">Search</string>
     <string name="breeds_bottombar">Breeds</string>
+    <string name="favorites_bottombar">Favorites</string>
 
     <string name="home_topbar">Home</string>
     <string name="search_topbar">Search cats</string>
     <string name="breeds_topbar">Breeds</string>
+    <string name="favorites_topbar">Favorites</string>
+
+    <string name="favorites_empty">No favorite cats yet. Tap the heart on a cat to add it here.</string>
 
     <string name="cat_dialog_title">Add a new cat</string>
     <string name="cat_dialog_name_label">Cat Name</string>

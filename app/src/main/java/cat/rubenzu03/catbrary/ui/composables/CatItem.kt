@@ -23,7 +23,7 @@ import cat.rubenzu03.catbrary.R
 
 
 @Composable
-fun CatItem(cat: Cat, modifier: Modifier, isEditMode: Boolean = false, onDeleteCat: (Cat) -> Unit = {}){
+fun CatItem(cat: Cat, modifier: Modifier, isEditMode: Boolean = false, onDeleteCat: (Cat) -> Unit = {}, onToggleFavorite: (Cat) -> Unit = {}){
     var showDeleteDialog by remember { mutableStateOf(false) }
     var isExpanded by remember { mutableStateOf(false) }
 
@@ -63,14 +63,6 @@ fun CatItem(cat: Cat, modifier: Modifier, isEditMode: Boolean = false, onDeleteC
                         )
                     }
                 },
-                headlineContent = {
-                    Text(
-                        cat.name,
-                        style = if (isExpanded) MaterialTheme.typography.headlineSmallEmphasized else MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontWeight = if (isExpanded) FontWeight.Bold else FontWeight.Normal
-                    )
-                },
                 supportingContent = {
                     Text(
                         cat.breed.displayName,
@@ -83,6 +75,13 @@ fun CatItem(cat: Cat, modifier: Modifier, isEditMode: Boolean = false, onDeleteC
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        IconButton(onClick = { onToggleFavorite(cat) }) {
+                            Icon(
+                                painter = if (cat.isFavorite) painterResource(R.drawable.ic_favorite) else painterResource(R.drawable.ic_favorite_border),
+                                contentDescription = if (cat.isFavorite) "Remove from favorites" else "Add to favorites",
+                                tint = if (cat.isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                         if (isEditMode) {
                             IconButton(onClick = { showDeleteDialog = true }) {
                                 Icon(
@@ -106,9 +105,16 @@ fun CatItem(cat: Cat, modifier: Modifier, isEditMode: Boolean = false, onDeleteC
                         )
                     }
                 }
-            )
+            ) {
+                Text(
+                    cat.name,
+                    style = if (isExpanded) MaterialTheme.typography.headlineSmallEmphasized else MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = if (isExpanded) FontWeight.Bold else FontWeight.Normal
+                )
+            }
 
-val expandSpec = MaterialTheme.motionScheme.fastSpatialSpec<IntSize>()
+            val expandSpec = MaterialTheme.motionScheme.fastSpatialSpec<IntSize>()
             val fadeSpec = MaterialTheme.motionScheme.fastEffectsSpec<Float>()
             AnimatedVisibility(
                 visible = isExpanded,

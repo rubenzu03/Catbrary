@@ -10,6 +10,7 @@ class Cat {
     var age: Int = 0
     var breed: CatBreeds = CatBreeds.NONE
     var image: String = ""
+    var isFavorite: Boolean = false
 
     constructor(name: String, age: Int, breed: CatBreeds, image: String){
         this.name = name

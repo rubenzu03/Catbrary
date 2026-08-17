@@ -14,6 +14,12 @@ interface CatDao {
     @Query("SELECT * FROM cats WHERE name LIKE '%' || :searchQuery || '%'")
     suspend fun searchCatsByName(searchQuery: String): List<Cat>
 
+    @Query("SELECT * FROM cats WHERE isFavorite = 1")
+    suspend fun getFavoriteCats(): List<Cat>
+
+    @Query("UPDATE cats SET isFavorite = :isFavorite WHERE id = :id")
+    suspend fun updateFavorite(id: Int, isFavorite: Boolean)
+
    /* @Query("SELECT breed, SUM(breed) FROM cats  WHERE breed != 'NONE' GROUP BY breed")
     suspend fun getCatBreedsCount(): List<Pair<String, Int>>*/
 

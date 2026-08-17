@@ -148,7 +148,7 @@ fun BreedInfoItem(breed: CatBreedInfo, modifier: Modifier = Modifier) {
 fun CatBreedListScreen(breeds: List<CatBreedInfo>) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         items(breeds) { breed ->
-            BreedInfoItem(breed = breed)
+            BreedInfoItem(breed = breed, modifier = Modifier.animateItem())
         }
     }
 }
