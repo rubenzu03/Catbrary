@@ -21,7 +21,9 @@ import cat.rubenzu03.catbrary.ui.theme.CatbraryTheme
 
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.LargeFlexibleTopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.ExpandedDockedSearchBar
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
@@ -60,6 +62,7 @@ import cat.rubenzu03.catbrary.ui.viewmodel.CatBreedListViewModel
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,8 +85,15 @@ class MainActivity : ComponentActivity() {
                 val fadeThroughExit = remember(motionScheme) {
                     fadeOut(animationSpec = motionScheme.fastEffectsSpec())
                 }
+                val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
+                    canScroll = { currentRoute == "home" || currentRoute == "breeds" }
+                )
+                LaunchedEffect(currentRoute) {
+                    topAppBarScrollBehavior.state.heightOffset = 0f
+                    topAppBarScrollBehavior.state.contentOffset = 0f
+                }
                 Scaffold(
-                    topBar = { TopApplicationBar(viewModel,currentRoute) },
+                    topBar = { TopApplicationBar(viewModel, currentRoute, topAppBarScrollBehavior) },
                     bottomBar = { BottomNavigationBar(navController) },
                     floatingActionButton = { CreateFAB(viewModel = viewModel )},
                     floatingActionButtonPosition = FabPosition.End
@@ -91,7 +101,9 @@ class MainActivity : ComponentActivity() {
                     NavHost(
                         navController = navController,
                         startDestination = "home",
-                        modifier = Modifier.padding(innerPadding),
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
                         enterTransition = { fadeThroughEnter },
                         exitTransition = { fadeThroughExit },
                         popEnterTransition = { fadeThroughEnter },
@@ -204,15 +216,19 @@ class MainActivity : ComponentActivity() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun TopApplicationBar(viewModel: CreateCatViewModel, currentRoute: String?) {
+    fun TopApplicationBar(
+        viewModel: CreateCatViewModel,
+        currentRoute: String?,
+        scrollBehavior: TopAppBarScrollBehavior
+    ) {
         val title = when (currentRoute) {
             "home" -> stringResource(R.string.home_bottombar)
             "search" -> stringResource(R.string.search_topbar)
             "breeds" -> stringResource(R.string.breeds_topbar)
             else -> stringResource(R.string.app_name)
         }
-        TopAppBar(
-            title = { Text(title, style = MaterialTheme.typography.titleLarge) },
+        LargeFlexibleTopAppBar(
+            title = { Text(title) },
             actions = {
                 if (currentRoute == "home") {
                     IconButton(onClick = { viewModel.toggleEditMode() }) {
@@ -222,7 +238,8 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 }
-            }
+            },
+            scrollBehavior = scrollBehavior
         )
     }
 
