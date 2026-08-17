@@ -66,7 +66,7 @@ fun CatItem(cat: Cat, modifier: Modifier, isEditMode: Boolean = false, onDeleteC
                 headlineContent = {
                     Text(
                         cat.name,
-                        style = if (isExpanded) MaterialTheme.typography.headlineSmall else MaterialTheme.typography.titleLarge,
+                        style = if (isExpanded) MaterialTheme.typography.headlineSmallEmphasized else MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onSurface,
                         fontWeight = if (isExpanded) FontWeight.Bold else FontWeight.Normal
                     )

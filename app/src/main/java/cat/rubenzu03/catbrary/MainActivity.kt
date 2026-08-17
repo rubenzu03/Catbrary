@@ -4,8 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
@@ -63,6 +65,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+
+private sealed interface BreedContent {
+    data object Loading : BreedContent
+    data class Error(val message: String) : BreedContent
+    data object Content : BreedContent
+}
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -169,26 +177,6 @@ class MainActivity : ComponentActivity() {
                 icon = { Icon(painterResource(R.drawable.ic_info), contentDescription = "Breeds") },
                 label = { Text(stringResource(R.string.breeds_bottombar)) }
             )
-
-            /*NavigationBarItem(
-                selected = currentRoute == "favorites",
-                onClick = {
-                    if (currentRoute != "favorites") {
-                        navController.navigate("favorites") {
-                            popUpTo(navController.graph.startDestinationId)
-                            launchSingleTop = true
-                        }
-                    }
-                },
-                icon = { Icon(Icons.Default.FavoriteBorder, contentDescription = "Favorites") },
-                label = { Text("Favorites") },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = MaterialTheme.colorScheme.primary,
-                    unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                    selectedTextColor = MaterialTheme.colorScheme.primary,
-                    unselectedTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                )
-            )*/
         }
     }
 
@@ -206,10 +194,36 @@ class MainActivity : ComponentActivity() {
         val loading = breedViewModel.loading.collectAsState().value
         val error = breedViewModel.error.collectAsState().value
         LaunchedEffect(Unit) { breedViewModel.fetchBreeds() }
-        when {
-            loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
-            error != null -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("Error: $error") }
-            else -> CatBreedListScreen(breeds)
+        val target = when {
+            loading -> BreedContent.Loading
+            error != null -> BreedContent.Error(error)
+            else -> BreedContent.Content
+        }
+        val motionScheme = MaterialTheme.motionScheme
+        val transitionSpec = remember(motionScheme) {
+            (fadeIn(motionScheme.fastEffectsSpec()) +
+                scaleIn(initialScale = 0.92f, animationSpec = motionScheme.fastSpatialSpec()))
+                .togetherWith(fadeOut(motionScheme.fastEffectsSpec()))
+        }
+        AnimatedContent(
+            targetState = target,
+            transitionSpec = { transitionSpec }
+        ) { state ->
+            when (state) {
+                BreedContent.Loading -> {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                }
+
+                is BreedContent.Error -> {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text("Error: ${state.message}")
+                    }
+                }
+
+                BreedContent.Content -> CatBreedListScreen(breeds)
+            }
         }
     }
 

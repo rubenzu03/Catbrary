@@ -55,7 +55,7 @@ fun BreedInfoItem(breed: CatBreedInfo, modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.height(8.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Column {
-                    Text(text = breed.name, style = MaterialTheme.typography.titleMedium)
+                    Text(text = breed.name, style = MaterialTheme.typography.titleLargeEmphasized)
                     Text(text = stringResource(R.string.origin) + ": ${breed.origin}", style = MaterialTheme.typography.bodyMedium)
                     Text(text = breed.temperament, style = MaterialTheme.typography.bodySmall)
                 }
