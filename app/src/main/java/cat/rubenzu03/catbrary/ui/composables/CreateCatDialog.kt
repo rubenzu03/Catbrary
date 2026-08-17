@@ -26,17 +26,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.AddAPhoto
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -65,14 +61,14 @@ fun CreateCatFABDialog(onDismiss: () -> Unit,
         viewModel.imageUri = uri
     }
 
-    remember { viewModel.clearFields() }
+    LaunchedEffect(Unit) { viewModel.clearFields() }
 
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
         Surface(
-            color = MaterialTheme.colorScheme.background,
+            color = MaterialTheme.colorScheme.surfaceContainerHigh,
             shape = MaterialTheme.shapes.large
         ) {
             Column(
@@ -91,7 +87,7 @@ fun CreateCatFABDialog(onDismiss: () -> Unit,
                 ) {
                     IconButton(onClick = onDismiss) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            painter = painterResource(R.drawable.ic_arrow_back),
                             contentDescription = "Back",
                         )
                     }
@@ -172,7 +168,7 @@ fun CreateCatFABDialog(onDismiss: () -> Unit,
                             modifier = Modifier.padding(32.dp)
                         ) {
                             Icon(
-                                imageVector = Icons.Filled.AddAPhoto,
+                                painter = painterResource(R.drawable.ic_add_a_photo),
                                 contentDescription = "Add Photo",
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.size(48.dp)
@@ -186,7 +182,7 @@ fun CreateCatFABDialog(onDismiss: () -> Unit,
                         }
                     }
 
-                    FloatingActionButton(
+                    SmallFloatingActionButton(
                         onClick = {
                             imagePickerLauncher.launch("image/*")
                         },
@@ -197,7 +193,7 @@ fun CreateCatFABDialog(onDismiss: () -> Unit,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                     ) {
                         Icon(
-                            imageVector = Icons.Filled.Add,
+                            painter = painterResource(R.drawable.ic_add),
                             contentDescription = "Add Image"
                         )
                     }
@@ -223,7 +219,7 @@ fun CreateCatFABDialog(onDismiss: () -> Unit,
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Button(
+                    FilledTonalButton(
                         onClick = { viewModel.clearFields() },
                         modifier = Modifier
                             .width(200.dp)

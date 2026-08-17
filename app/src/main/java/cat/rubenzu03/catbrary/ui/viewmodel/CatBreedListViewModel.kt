@@ -80,7 +80,7 @@ class CatBreedListViewModel(application: Application) : AndroidViewModel(applica
                 }
             },
             onError = { err: VolleyError ->
-                _error.value = err.message
+                _error.value = err.message ?: "HTTP ${err.networkResponse?.statusCode}"
                 _loading.value = false
             }
         )

@@ -4,15 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
@@ -27,15 +21,21 @@ import cat.rubenzu03.catbrary.ui.theme.CatbraryTheme
 
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.ExpandedDockedSearchBar
+import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.rememberSearchBarState
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.launch
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -51,17 +51,14 @@ import cat.rubenzu03.catbrary.ui.viewmodel.SearchViewModelFactory
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.Alignment
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.core.CubicBezierEasing
-import androidx.compose.material.icons.filled.Info
+import androidx.compose.animation.scaleIn
 import cat.rubenzu03.catbrary.ui.composables.CatBreedListScreen
 import cat.rubenzu03.catbrary.ui.viewmodel.CatBreedListViewModel
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 
 class MainActivity : ComponentActivity() {
@@ -77,6 +74,14 @@ class MainActivity : ComponentActivity() {
             CatbraryTheme {
                 val navController = rememberNavController()
                 val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+                val motionScheme = MaterialTheme.motionScheme
+                val fadeThroughEnter = remember(motionScheme) {
+                    fadeIn(animationSpec = motionScheme.defaultEffectsSpec()) +
+                        scaleIn(initialScale = 0.92f, animationSpec = motionScheme.defaultSpatialSpec())
+                }
+                val fadeThroughExit = remember(motionScheme) {
+                    fadeOut(animationSpec = motionScheme.fastEffectsSpec())
+                }
                 Scaffold(
                     topBar = { TopApplicationBar(viewModel,currentRoute) },
                     bottomBar = { BottomNavigationBar(navController) },
@@ -87,62 +92,10 @@ class MainActivity : ComponentActivity() {
                         navController = navController,
                         startDestination = "home",
                         modifier = Modifier.padding(innerPadding),
-                        enterTransition = {
-                            slideInHorizontally(
-                                initialOffsetX = { fullWidth -> fullWidth / 4 },
-                                animationSpec = tween(
-                                    durationMillis = 320,
-                                    easing = CubicBezierEasing(0.2f, 0.0f, 0.0f, 1.0f)
-                                )
-                            ) + fadeIn(
-                                animationSpec = tween(
-                                    durationMillis = 320,
-                                    easing = CubicBezierEasing(0.2f, 0.0f, 0.0f, 1.0f)
-                                )
-                            )
-                        },
-                        exitTransition = {
-                            slideOutHorizontally(
-                                targetOffsetX = { fullWidth -> -fullWidth / 8 },
-                                animationSpec = tween(
-                                    durationMillis = 280,
-                                    easing = CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f)
-                                )
-                            ) + fadeOut(
-                                animationSpec = tween(
-                                    durationMillis = 280,
-                                    easing = CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f)
-                                )
-                            )
-                        },
-                        popEnterTransition = {
-                            slideInHorizontally(
-                                initialOffsetX = { fullWidth -> -fullWidth / 8 },
-                                animationSpec = tween(
-                                    durationMillis = 320,
-                                    easing = CubicBezierEasing(0.2f, 0.0f, 0.0f, 1.0f)
-                                )
-                            ) + fadeIn(
-                                animationSpec = tween(
-                                    durationMillis = 320,
-                                    easing = CubicBezierEasing(0.2f, 0.0f, 0.0f, 1.0f)
-                                )
-                            )
-                        },
-                        popExitTransition = {
-                            slideOutHorizontally(
-                                targetOffsetX = { fullWidth -> fullWidth / 4 },
-                                animationSpec = tween(
-                                    durationMillis = 280,
-                                    easing = CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f)
-                                )
-                            ) + fadeOut(
-                                animationSpec = tween(
-                                    durationMillis = 280,
-                                    easing = CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f)
-                                )
-                            )
-                        }
+                        enterTransition = { fadeThroughEnter },
+                        exitTransition = { fadeThroughExit },
+                        popEnterTransition = { fadeThroughEnter },
+                        popExitTransition = { fadeThroughExit }
                     ) {
                         composable("home") { MainScreen(viewModel = viewModel) }
                         composable("favorites") { FavoritesScreen() }
@@ -173,14 +126,8 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 },
-                icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
-                label = { Text(stringResource(R.string.home_bottombar)) },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = MaterialTheme.colorScheme.primary,
-                    unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                    selectedTextColor = MaterialTheme.colorScheme.primary,
-                    unselectedTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                )
+                icon = { Icon(painterResource(R.drawable.ic_home), contentDescription = "Home") },
+                label = { Text(stringResource(R.string.home_bottombar)) }
             )
 
             NavigationBarItem(
@@ -193,14 +140,8 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 },
-                icon = { Icon(Icons.Default.Search, contentDescription = "Search") },
-                label = { Text(stringResource(R.string.search_bottombar)) },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = MaterialTheme.colorScheme.primary,
-                    unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                    selectedTextColor = MaterialTheme.colorScheme.primary,
-                    unselectedTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                )
+                icon = { Icon(painterResource(R.drawable.ic_search), contentDescription = "Search") },
+                label = { Text(stringResource(R.string.search_bottombar)) }
             )
 
             NavigationBarItem(
@@ -213,14 +154,8 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 },
-                icon = { Icon(Icons.Default.Info, contentDescription = "Breeds") },
-                label = { Text(stringResource(R.string.breeds_bottombar)) },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = MaterialTheme.colorScheme.primary,
-                    unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                    selectedTextColor = MaterialTheme.colorScheme.primary,
-                    unselectedTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                )
+                icon = { Icon(painterResource(R.drawable.ic_info), contentDescription = "Breeds") },
+                label = { Text(stringResource(R.string.breeds_bottombar)) }
             )
 
             /*NavigationBarItem(
@@ -277,25 +212,17 @@ class MainActivity : ComponentActivity() {
             else -> stringResource(R.string.app_name)
         }
         TopAppBar(
-            title = { Text(title) },
+            title = { Text(title, style = MaterialTheme.typography.titleLarge) },
             actions = {
                 if (currentRoute == "home") {
                     IconButton(onClick = { viewModel.toggleEditMode() }) {
                         Icon(
-                            imageVector = if (viewModel.isEditMode) Icons.Default.Done else Icons.Default.Edit,
+                            painter = if (viewModel.isEditMode) painterResource(R.drawable.ic_check) else painterResource(R.drawable.ic_edit),
                             contentDescription = if (viewModel.isEditMode) "Done editing" else "Edit cats"
                         )
                     }
                 }
-            },
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.primary
-            ),
-            /*TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
-            titleContentColor = MaterialTheme.colorScheme.onPrimary
-        ),*/
+            }
         )
     }
 
@@ -325,6 +252,7 @@ class MainActivity : ComponentActivity() {
         )
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun SearchScreen(modifier: Modifier = Modifier) {
         val context = LocalContext.current
@@ -332,56 +260,95 @@ class MainActivity : ComponentActivity() {
         val searchFactory = remember { SearchViewModelFactory(repo) }
         val searchViewModel: SearchViewModel = viewModel(factory = searchFactory)
 
-        val searchQuery by searchViewModel.searchQuery
         val searchResults by searchViewModel.searchResults
         val isSearching by searchViewModel.isSearching
+        val scope = rememberCoroutineScope()
+
+        val searchBarState = rememberSearchBarState()
+        val textFieldState = rememberTextFieldState()
+
+        LaunchedEffect(Unit) {
+            snapshotFlow { textFieldState.text.toString() }
+                .collect { query -> searchViewModel.updateSearchQuery(query) }
+        }
+
+        val inputField = @Composable {
+            SearchBarDefaults.InputField(
+                textFieldState = textFieldState,
+                searchBarState = searchBarState,
+                onSearch = { scope.launch { searchBarState.animateToCollapsed() } },
+                placeholder = {
+                    Text(
+                        stringResource(R.string.search_hint),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                },
+                leadingIcon = { Icon(painterResource(R.drawable.ic_search), contentDescription = "Search") },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
 
         Column(
             modifier = modifier
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = { newQuery -> searchViewModel.updateSearchQuery(newQuery) },
-                label = { Text(stringResource(R.string.search_hint)) },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search") },
+            SearchBar(
+                state = searchBarState,
+                inputField = inputField,
                 modifier = Modifier.fillMaxWidth()
             )
+        }
 
-            if (isSearching) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
+        ExpandedDockedSearchBar(
+            state = searchBarState,
+            inputField = inputField,
+            modifier = Modifier.padding(16.dp)
+        ) {
+            when {
+                isSearching -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 }
-            } else if (searchQuery.isNotBlank() && searchResults.isEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(stringResource(R.string.search_no_results) + "\"$searchQuery\"")
+
+                searchResults.isNotEmpty() -> {
+                    CatList(
+                        cats = searchResults,
+                        modifier = Modifier.padding(top = 16.dp),
+                        isEditMode = false,
+                        onDeleteCat = {}
+                    )
                 }
-            } else if (searchResults.isNotEmpty()) {
-                CatList(
-                    cats = searchResults,
-                    modifier = Modifier.padding(top = 16.dp),
-                    isEditMode = false,
-                    onDeleteCat = {}
-                )
-            } else if (searchQuery.isBlank()) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(stringResource(R.string.search_hint))
+
+                textFieldState.text.isNotEmpty() -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            stringResource(R.string.search_no_results) +
+                                "\"${textFieldState.text}\""
+                        )
+                    }
+                }
+
+                else -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(stringResource(R.string.search_hint))
+                    }
                 }
             }
         }

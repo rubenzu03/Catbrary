@@ -11,12 +11,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ExpandLess
-import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import cat.rubenzu03.catbrary.domain.CatBreedInfo
 import cat.rubenzu03.catbrary.R
 import coil.compose.AsyncImage
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 
@@ -40,7 +35,11 @@ fun BreedInfoItem(breed: CatBreedInfo, modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxWidth()
             .padding(8.dp)
-            .clickable { expanded = !expanded }
+            .clickable { expanded = !expanded },
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+        ),
+        shape = MaterialTheme.shapes.extraLarge
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             AsyncImage(
@@ -62,7 +61,7 @@ fun BreedInfoItem(breed: CatBreedInfo, modifier: Modifier = Modifier) {
                     Text(text = breed.temperament, style = MaterialTheme.typography.bodySmall)
                 }
                 Icon(
-                    imageVector = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                    painter = if (expanded) painterResource(R.drawable.ic_expand_less) else painterResource(R.drawable.ic_expand_more),
                     contentDescription = if (expanded) "Mostrar menos" else "Mostrar más"
                 )
             }
@@ -147,7 +146,7 @@ fun BreedInfoItem(breed: CatBreedInfo, modifier: Modifier = Modifier) {
 @Composable
 fun CatBreedListScreen(breeds: List<CatBreedInfo>) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
-        items(breeds.filter { it.imageUrl.isNotBlank() }) { breed ->
+        items(breeds) { breed ->
             BreedInfoItem(breed = breed)
         }
     }
@@ -158,7 +157,7 @@ fun StarRate(rating: Int, max: Int = 5) {
     Row {
         repeat(rating ) { index ->
             Icon(
-                imageVector = Icons.Default.Star,
+                painter = painterResource(R.drawable.ic_star),
                 contentDescription = null,
                 modifier = Modifier.size(20.dp),
                 tint = if (index < rating) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
@@ -166,7 +165,7 @@ fun StarRate(rating: Int, max: Int = 5) {
         }
         repeat(max - rating) { index ->
             Icon(
-                imageVector = Icons.Default.StarBorder,
+                painter = painterResource(R.drawable.ic_star_border),
                 contentDescription = null,
                 modifier = Modifier.size(20.dp),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant

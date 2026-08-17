@@ -1,6 +1,7 @@
 package cat.rubenzu03.catbrary.api
 
 import android.content.Context
+import cat.rubenzu03.catbrary.BuildConfig
 import cat.rubenzu03.catbrary.domain.CatBreedInfo
 import com.android.volley.RequestQueue
 import com.android.volley.VolleyError
@@ -12,12 +13,19 @@ class CatBreedApiRequest(context: Context) {
 
     private val requestQueue: RequestQueue = Volley.newRequestQueue(context)
 
+    private fun headers(): MutableMap<String, String> =
+        if (BuildConfig.API_KEY.isNotBlank()) {
+            mutableMapOf("x-api-key" to BuildConfig.API_KEY)
+        } else {
+            mutableMapOf()
+        }
+
     fun fetchAllCatBreedsInfo(
         url: String,
         onSuccess: (List<CatBreedInfo>) -> Unit,
         onError: (VolleyError) -> Unit
     ) {
-        val request = JsonArrayRequest(
+        val request = object : JsonArrayRequest(
             com.android.volley.Request.Method.GET,
             url,
             null,
@@ -52,7 +60,9 @@ class CatBreedApiRequest(context: Context) {
                 onSuccess(catBreeds)
             },
             { error -> onError(error) }
-        )
+        ) {
+            override fun getHeaders(): MutableMap<String, String> = headers()
+        }
         requestQueue.add(request)
     }
 
@@ -62,7 +72,7 @@ class CatBreedApiRequest(context: Context) {
             return
         }
         val url = "https://api.thecatapi.com/v1/images/$refImageId"
-        val request = JsonObjectRequest(
+        val request = object : JsonObjectRequest(
             com.android.volley.Request.Method.GET,
             url,
             null,
@@ -71,7 +81,9 @@ class CatBreedApiRequest(context: Context) {
                 onSuccess(imageUrl)
             },
             { error -> onError(error) }
-        )
+        ) {
+            override fun getHeaders(): MutableMap<String, String> = headers()
+        }
         requestQueue.add(request)
     }
 }
