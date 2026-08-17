@@ -5,6 +5,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,6 +18,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -156,15 +159,10 @@ fun CatBreedListScreen(breeds: List<CatBreedInfo>) {
 @Composable
 fun StarRate(rating: Int, max: Int = 5) {
     Row {
-        repeat(rating ) { index ->
-            Icon(
-                painter = painterResource(R.drawable.ic_star),
-                contentDescription = null,
-                modifier = Modifier.size(20.dp),
-                tint = if (index < rating) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-            )
+        repeat(rating) {
+            SolidStar(tint = MaterialTheme.colorScheme.primary)
         }
-        repeat(max - rating) { index ->
+        repeat(max - rating) {
             Icon(
                 painter = painterResource(R.drawable.ic_star_border),
                 contentDescription = null,
@@ -172,5 +170,25 @@ fun StarRate(rating: Int, max: Int = 5) {
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
+    }
+}
+
+private val StarOutlineCoordinates = listOf(
+    12f to 17.27f, 18.18f to 21f, 16.54f to 13.97f, 22f to 9.24f,
+    14.81f to 8.63f, 12f to 2f, 9.19f to 8.63f, 2f to 9.24f,
+    7.46f to 13.97f, 5.82f to 21f
+)
+
+@Composable
+private fun SolidStar(tint: Color) {
+    Canvas(modifier = Modifier.size(20.dp)) {
+        val scale = size.minDimension / 24f
+        val path = Path().apply {
+            StarOutlineCoordinates.forEachIndexed { i, (x, y) ->
+                if (i == 0) moveTo(x * scale, y * scale) else lineTo(x * scale, y * scale)
+            }
+            close()
+        }
+        drawPath(path = path, color = tint)
     }
 }

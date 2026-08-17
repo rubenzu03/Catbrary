@@ -9,6 +9,10 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.Volley
 
+private fun org.json.JSONObject.optRating(key: String): Int = runCatching {
+    this.optString(key).trim().toIntOrNull() ?: this.optInt(key)
+}.getOrDefault(0)
+
 class CatBreedApiRequest(context: Context) {
 
     private val requestQueue: RequestQueue = Volley.newRequestQueue(context)
@@ -33,24 +37,26 @@ class CatBreedApiRequest(context: Context) {
                 val catBreeds = mutableListOf<CatBreedInfo>()
                 for (i in 0 until response.length()) {
                     val jsonObj = response.getJSONObject(i)
+                    val breedId = jsonObj.optString("id")
+                    val historicalRatings = HISTORICAL_BREED_RATINGS[breedId]
                     val catBreed = CatBreedInfo(
-                        id = jsonObj.optString("id"),
+                        id = breedId,
                         name = jsonObj.optString("name"),
                         temperament = jsonObj.optString("temperament"),
                         origin = jsonObj.optString("origin"),
                         description = jsonObj.optString("description"),
                         indoor = jsonObj.optInt("indoor"),
-                        adaptability = jsonObj.optInt("adaptability"),
-                        affectionLevel = jsonObj.optInt("affection_level"),
-                        childFriendly = jsonObj.optInt("child_friendly"),
-                        dogFriendly = jsonObj.optInt("dog_friendly"),
-                        energyLevel = jsonObj.optInt("energy_level"),
-                        grooming = jsonObj.optInt("grooming"),
-                        healthIssues = jsonObj.optInt("health_issues"),
-                        intelligence = jsonObj.optInt("intelligence"),
-                        sheddingLevel = jsonObj.optInt("shedding_level"),
-                        socialNeeds = jsonObj.optInt("social_needs"),
-                        strangerFriendly = jsonObj.optInt("stranger_friendly"),
+                        adaptability = historicalRatings?.adaptability ?: jsonObj.optRating("adaptability"),
+                        affectionLevel = historicalRatings?.affectionLevel ?: jsonObj.optRating("affection_level"),
+                        childFriendly = historicalRatings?.childFriendly ?: jsonObj.optRating("child_friendly"),
+                        dogFriendly = historicalRatings?.dogFriendly ?: jsonObj.optRating("dog_friendly"),
+                        energyLevel = historicalRatings?.energyLevel ?: jsonObj.optRating("energy_level"),
+                        grooming = historicalRatings?.grooming ?: jsonObj.optRating("grooming"),
+                        healthIssues = historicalRatings?.healthIssues ?: jsonObj.optRating("health_issues"),
+                        intelligence = historicalRatings?.intelligence ?: jsonObj.optRating("intelligence"),
+                        sheddingLevel = historicalRatings?.sheddingLevel ?: jsonObj.optRating("shedding_level"),
+                        socialNeeds = historicalRatings?.socialNeeds ?: jsonObj.optRating("social_needs"),
+                        strangerFriendly = historicalRatings?.strangerFriendly ?: jsonObj.optRating("stranger_friendly"),
                         wikipediaUrl = jsonObj.optString("wikipedia_url"),
                         refImageid = jsonObj.optString("reference_image_id"),
                         imageUrl = ""
