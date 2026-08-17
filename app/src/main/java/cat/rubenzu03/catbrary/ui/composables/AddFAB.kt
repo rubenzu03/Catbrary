@@ -1,23 +1,23 @@
 package cat.rubenzu03.catbrary.ui.composables
 
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.FloatingToolbarDefaults
-import androidx.compose.material3.HorizontalFloatingToolbar
+import androidx.compose.material3.FloatingActionButtonMenu
+import androidx.compose.material3.FloatingActionButtonMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.ToggleFloatingActionButton
+import androidx.compose.material3.ToggleFloatingActionButtonDefaults
+import androidx.compose.material3.ToggleFloatingActionButtonDefaults.animateIcon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import cat.rubenzu03.catbrary.R
 import cat.rubenzu03.catbrary.persistence.CatRepository
@@ -40,30 +40,31 @@ fun CreateFAB(viewModel: CreateCatViewModel) {
         )
     }
 
-    HorizontalFloatingToolbar(
+    FloatingActionButtonMenu(
         expanded = expanded,
-        colors = FloatingToolbarDefaults.vibrantFloatingToolbarColors(),
-        floatingActionButton = {
-            FloatingToolbarDefaults.VibrantFloatingActionButton(
-                onClick = { expanded = !expanded }
+        button = {
+            ToggleFloatingActionButton(
+                checked = expanded,
+                onCheckedChange = { expanded = it }
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_add),
-                    contentDescription = "Add"
+                    contentDescription = "Add",
+                    modifier = Modifier
+                        .animateIcon(checkedProgress = { checkedProgress })
+                        .graphicsLayer { rotationZ = checkedProgress * 45f }
                 )
             }
         }
     ) {
-        FilledTonalButton(
+        FloatingActionButtonMenuItem(
             onClick = {
                 expanded = false
                 showDialog = true
-            }
-        ) {
-            Icon(painter = painterResource(R.drawable.ic_add), contentDescription = null)
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(stringResource(R.string.add_cat))
-        }
+            },
+            text = { Text(stringResource(R.string.add_cat)) },
+            icon = { Icon(painter = painterResource(R.drawable.ic_add_a_photo), contentDescription = null) }
+        )
     }
 }
 
