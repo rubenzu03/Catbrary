@@ -5,8 +5,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.IntSize
 import cat.rubenzu03.catbrary.domain.CatBreedInfo
 import cat.rubenzu03.catbrary.R
 import coil.compose.AsyncImage
@@ -65,17 +64,19 @@ fun BreedInfoItem(breed: CatBreedInfo, modifier: Modifier = Modifier) {
                     contentDescription = if (expanded) "Mostrar menos" else "Mostrar más"
                 )
             }
+            val expandSpec = MaterialTheme.motionScheme.fastSpatialSpec<IntSize>()
+            val fadeSpec = MaterialTheme.motionScheme.fastEffectsSpec<Float>()
             AnimatedVisibility(
                 visible = expanded,
                 enter = expandVertically(
-                    animationSpec = tween(300, easing = FastOutSlowInEasing)
+                    animationSpec = expandSpec
                 ) + fadeIn(
-                    animationSpec = tween(300, easing = FastOutSlowInEasing)
+                    animationSpec = fadeSpec
                 ),
                 exit = shrinkVertically(
-                    animationSpec = tween(300, easing = FastOutSlowInEasing)
+                    animationSpec = expandSpec
                 ) + fadeOut(
-                    animationSpec = tween(300, easing = FastOutSlowInEasing)
+                    animationSpec = fadeSpec
                 )
             ) {
                 Column {

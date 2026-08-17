@@ -4,7 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.animation.*
-import androidx.compose.animation.core.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,6 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.IntSize
 import cat.rubenzu03.catbrary.domain.Cat
 import cat.rubenzu03.catbrary.domain.CatBreeds
 import coil.compose.AsyncImage
@@ -108,17 +108,19 @@ fun CatItem(cat: Cat, modifier: Modifier, isEditMode: Boolean = false, onDeleteC
                 }
             )
 
+val expandSpec = MaterialTheme.motionScheme.fastSpatialSpec<IntSize>()
+            val fadeSpec = MaterialTheme.motionScheme.fastEffectsSpec<Float>()
             AnimatedVisibility(
                 visible = isExpanded,
                 enter = expandVertically(
-                    animationSpec = tween(300, easing = FastOutSlowInEasing)
+                    animationSpec = expandSpec
                 ) + fadeIn(
-                    animationSpec = tween(300, easing = FastOutSlowInEasing)
+                    animationSpec = fadeSpec
                 ),
                 exit = shrinkVertically(
-                    animationSpec = tween(300, easing = FastOutSlowInEasing)
+                    animationSpec = expandSpec
                 ) + fadeOut(
-                    animationSpec = tween(300, easing = FastOutSlowInEasing)
+                    animationSpec = fadeSpec
                 )
             ) {
                 Column(
