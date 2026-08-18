@@ -2,23 +2,19 @@ package cat.rubenzu03.catbrary.ui.composables
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.ExpandLess
-import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.*
 import androidx.compose.animation.*
-import androidx.compose.animation.core.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.IntSize
 import cat.rubenzu03.catbrary.domain.Cat
 import cat.rubenzu03.catbrary.domain.CatBreeds
 import coil.compose.AsyncImage
@@ -27,7 +23,7 @@ import cat.rubenzu03.catbrary.R
 
 
 @Composable
-fun CatItem(cat: Cat, modifier: Modifier, isEditMode: Boolean = false, onDeleteCat: (Cat) -> Unit = {}){
+fun CatItem(cat: Cat, modifier: Modifier, isEditMode: Boolean = false, onDeleteCat: (Cat) -> Unit = {}, onToggleFavorite: (Cat) -> Unit = {}){
     var showDeleteDialog by remember { mutableStateOf(false) }
     var isExpanded by remember { mutableStateOf(false) }
 
@@ -37,14 +33,14 @@ fun CatItem(cat: Cat, modifier: Modifier, isEditMode: Boolean = false, onDeleteC
             .clickable { isExpanded = !isExpanded },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
         ),
-        shape = RoundedCornerShape(16.dp)
+        shape = MaterialTheme.shapes.extraLarge
     ) {
         Column {
             ListItem(
                 colors = ListItemDefaults.colors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
                 ),
                 leadingContent = {
                     if (cat.image.isNotEmpty()) {
@@ -58,7 +54,7 @@ fun CatItem(cat: Cat, modifier: Modifier, isEditMode: Boolean = false, onDeleteC
                                 .width(baseSize)
                                 .aspectRatio(imageAspectRatio)
                                 .heightIn(max = baseSize * 1.5f)
-                                .clip(RoundedCornerShape(12.dp)),
+                                .clip(MaterialTheme.shapes.medium),
                             contentScale = ContentScale.Crop,
                             onSuccess = { success ->
                                 val drawable = success.result.drawable
@@ -66,14 +62,6 @@ fun CatItem(cat: Cat, modifier: Modifier, isEditMode: Boolean = false, onDeleteC
                             }
                         )
                     }
-                },
-                headlineContent = {
-                    Text(
-                        cat.name,
-                        style = if (isExpanded) MaterialTheme.typography.headlineSmall else MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontWeight = if (isExpanded) FontWeight.Bold else FontWeight.Normal
-                    )
                 },
                 supportingContent = {
                     Text(
@@ -87,10 +75,17 @@ fun CatItem(cat: Cat, modifier: Modifier, isEditMode: Boolean = false, onDeleteC
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        IconButton(onClick = { onToggleFavorite(cat) }) {
+                            Icon(
+                                painter = if (cat.isFavorite) painterResource(R.drawable.ic_favorite) else painterResource(R.drawable.ic_favorite_border),
+                                contentDescription = if (cat.isFavorite) "Remove from favorites" else "Add to favorites",
+                                tint = if (cat.isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                         if (isEditMode) {
                             IconButton(onClick = { showDeleteDialog = true }) {
                                 Icon(
-                                    Icons.Default.Delete,
+                                    painterResource(R.drawable.ic_delete),
                                     contentDescription = "Delete cat",
                                     tint = MaterialTheme.colorScheme.error
                                 )
@@ -104,25 +99,34 @@ fun CatItem(cat: Cat, modifier: Modifier, isEditMode: Boolean = false, onDeleteC
                         }
 
                         Icon(
-                            imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                            painter = if (isExpanded) painterResource(R.drawable.ic_expand_less) else painterResource(R.drawable.ic_expand_more),
                             contentDescription = if (isExpanded) "Collapse" else "Expand",
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 }
-            )
+            ) {
+                Text(
+                    cat.name,
+                    style = if (isExpanded) MaterialTheme.typography.headlineSmallEmphasized else MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = if (isExpanded) FontWeight.Bold else FontWeight.Normal
+                )
+            }
 
+            val expandSpec = MaterialTheme.motionScheme.fastSpatialSpec<IntSize>()
+            val fadeSpec = MaterialTheme.motionScheme.fastEffectsSpec<Float>()
             AnimatedVisibility(
                 visible = isExpanded,
                 enter = expandVertically(
-                    animationSpec = tween(300, easing = FastOutSlowInEasing)
+                    animationSpec = expandSpec
                 ) + fadeIn(
-                    animationSpec = tween(300, easing = FastOutSlowInEasing)
+                    animationSpec = fadeSpec
                 ),
                 exit = shrinkVertically(
-                    animationSpec = tween(300, easing = FastOutSlowInEasing)
+                    animationSpec = expandSpec
                 ) + fadeOut(
-                    animationSpec = tween(300, easing = FastOutSlowInEasing)
+                    animationSpec = fadeSpec
                 )
             ) {
                 Column(
@@ -186,7 +190,7 @@ fun CatItem(cat: Cat, modifier: Modifier, isEditMode: Boolean = false, onDeleteC
                                 .fillMaxWidth()
                                 .aspectRatio(expandedImageAspectRatio)
                                 .heightIn(min = 150.dp, max = 300.dp)
-                                .clip(RoundedCornerShape(12.dp)),
+                                .clip(MaterialTheme.shapes.medium),
                             contentScale = ContentScale.Crop,
                             onSuccess = { success ->
                                 val drawable = success.result.drawable

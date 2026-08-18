@@ -24,6 +24,9 @@ class CreateCatViewModel(private val repo: CatRepository, private val context: C
     var cats by mutableStateOf<List<Cat>>(emptyList())
         private set
 
+    var favoriteCats by mutableStateOf<List<Cat>>(emptyList())
+        private set
+
     var isEditMode by mutableStateOf(false)
         private set
 
@@ -114,6 +117,21 @@ class CreateCatViewModel(private val repo: CatRepository, private val context: C
     fun loadAllCats() {
         viewModelScope.launch {
             cats = repo.getAllCats()
+        }
+    }
+
+    fun loadFavoriteCats() {
+        viewModelScope.launch {
+            favoriteCats = repo.getFavoriteCats()
+        }
+    }
+
+    fun toggleFavorite(cat: Cat) {
+        viewModelScope.launch {
+            cat.isFavorite = !cat.isFavorite
+            repo.updateFavorite(cat.id, cat.isFavorite)
+            loadAllCats()
+            loadFavoriteCats()
         }
     }
 

@@ -10,38 +10,27 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.AddAPhoto
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import cat.rubenzu03.catbrary.R
 import cat.rubenzu03.catbrary.domain.CatBreeds
 import cat.rubenzu03.catbrary.ui.viewmodel.CreateCatViewModel
@@ -50,6 +39,7 @@ import coil.compose.AsyncImage
 import androidx.compose.material3.*
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateCatFABDialog(onDismiss: () -> Unit,
                        viewModel: CreateCatViewModel
@@ -65,186 +55,175 @@ fun CreateCatFABDialog(onDismiss: () -> Unit,
         viewModel.imageUri = uri
     }
 
-    remember { viewModel.clearFields() }
+    LaunchedEffect(Unit) { viewModel.clearFields() }
 
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ModalBottomSheet(
+        onDismissRequest = onDismiss
     ) {
-        Surface(
-            color = MaterialTheme.colorScheme.background,
-            shape = MaterialTheme.shapes.large
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+                .padding(24.dp)
         ) {
-            Column(
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = onDismiss) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_arrow_back),
+                        contentDescription = "Back",
+                    )
+                }
+                Text(
+                    stringResource(R.string.cat_dialog_title),
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier.padding(start = 8.dp)
+                )
+            }
+            Spacer(modifier = Modifier.height(24.dp))
+            LabeledTextField(
+                value = name,
+                onValueChange = { viewModel.name = it },
+                label = stringResource(R.string.cat_dialog_name_label),
+                placeholder = stringResource(R.string.cat_dialog_name_hint),
+                modifier = Modifier.fillMaxWidth(),
+            )
+
+            LabeledDropDown(
+                options = CatBreeds.entries,
+                selectedOption = selectedBreed,
+                onOptionSelected = { viewModel.selectedBreed = it },
+                label = stringResource(R.string.cat_dialog_breed_label),
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = stringResource(R.string.cat_dialog_name_label),
+                optionToString = { it.displayName }
+            )
+
+            LabeledTextField(
+                value = age,
+                onValueChange = { viewModel.age = it },
+                label = stringResource(R.string.cat_dialog_age_label),
+                placeholder = stringResource(R.string.cat_dialog_age_hint),
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number
+                )
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                stringResource(R.string.cat_dialog_cat_photo_text),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .widthIn(min = 350.dp, max = 600.dp)
-                    .wrapContentHeight()
-                    .padding(12.dp)
-                    .padding(WindowInsets.navigationBars.asPaddingValues())
-                    .heightIn(max = 800.dp)
-                    .verticalScroll(rememberScrollState())
+                    .let { modifier ->
+                        if (imageUri != null) {
+                            modifier.wrapContentHeight()
+                        } else {
+                            modifier.height(200.dp)
+                        }
+                    }
+                    .clip(RoundedCornerShape(16.dp))
+                    .border(
+                        BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+                        RoundedCornerShape(16.dp)
+                    ),
+                contentAlignment = Alignment.Center
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(onClick = onDismiss) {
+                if (imageUri != null) {
+                    AsyncImage(
+                        model = imageUri,
+                        contentDescription = "Cat Image",
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = 150.dp, max = 400.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                    )
+                } else {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.padding(32.dp)
+                    ) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            painter = painterResource(R.drawable.ic_add_a_photo),
+                            contentDescription = "Add Photo",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(48.dp)
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            stringResource(R.string.cat_dialog_cat_photo_hint),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
-                    Text(
-                        stringResource(R.string.cat_dialog_title),
-                        style = MaterialTheme.typography.headlineMedium,
-                        modifier = Modifier.padding(start = 8.dp)
+                }
+
+                SmallFloatingActionButton(
+                    onClick = {
+                        imagePickerLauncher.launch("image/*")
+                    },
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(12.dp),
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_add),
+                        contentDescription = "Add Image"
                     )
                 }
-                Spacer(modifier = Modifier.height(24.dp))
-                LabeledTextField(
-                    value = name,
-                    onValueChange = { viewModel.name = it },
-                    label = stringResource(R.string.cat_dialog_name_label),
-                    placeholder = stringResource(R.string.cat_dialog_name_hint),
-                    modifier = Modifier.fillMaxWidth(),
-                )
+            }
 
-                LabeledDropDown(
-                    options = CatBreeds.entries,
-                    selectedOption = selectedBreed,
-                    onOptionSelected = { viewModel.selectedBreed = it },
-                    label = stringResource(R.string.cat_dialog_breed_label),
-                    modifier = Modifier.fillMaxWidth(),
-                    placeholder = stringResource(R.string.cat_dialog_name_label),
-                    optionToString = { it.displayName }
-                )
+            Spacer(modifier = Modifier.height(16.dp))
 
-                LabeledTextField(
-                    value = age,
-                    onValueChange = { viewModel.age = it },
-                    label = stringResource(R.string.cat_dialog_age_label),
-                    placeholder = stringResource(R.string.cat_dialog_age_hint),
-                    modifier = Modifier.fillMaxWidth(),
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Number
-                    )
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
+            if (viewModel.errorMessageResId != null) {
                 Text(
-                    stringResource(R.string.cat_dialog_cat_photo_text),
-                    style = MaterialTheme.typography.titleMedium,
+                    text = stringResource(id = viewModel.errorMessageResId!!),
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
+            }
 
-                Box(
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 24.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                FilledTonalButton(
+                    onClick = { viewModel.clearFields() },
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .let { modifier ->
-                            if (imageUri != null) {
-                                modifier.wrapContentHeight()
-                            } else {
-                                modifier.height(200.dp)
-                            }
-                        }
-                        .clip(RoundedCornerShape(16.dp))
-                        .border(
-                            BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-                            RoundedCornerShape(16.dp)
-                        ),
-                    contentAlignment = Alignment.Center
+                        .width(200.dp)
+                        .height(60.dp)
                 ) {
-                    if (imageUri != null) {
-                        AsyncImage(
-                            model = imageUri,
-                            contentDescription = "Cat Image",
-                            contentScale = ContentScale.Fit,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .heightIn(min = 150.dp, max = 400.dp)
-                                .clip(RoundedCornerShape(16.dp))
-                        )
-                    } else {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.padding(32.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.AddAPhoto,
-                                contentDescription = "Add Photo",
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.size(48.dp)
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                stringResource(R.string.cat_dialog_cat_photo_hint),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                    Text(stringResource(R.string.clear_button))
+                }
+                Spacer(modifier = Modifier.width(16.dp))
+                SaveFillButton(
+                    onClick = {
+                        if (viewModel.saveCat()) {
+                            onDismiss()
                         }
-                    }
-
-                    FloatingActionButton(
-                        onClick = {
-                            imagePickerLauncher.launch("image/*")
-                        },
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(12.dp),
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Add,
-                            contentDescription = "Add Image"
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                if (viewModel.errorMessageResId != null) {
-                    Text(
-                        text = stringResource(id = viewModel.errorMessageResId!!),
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                }
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                Row(
+                    },
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 24.dp),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Button(
-                        onClick = { viewModel.clearFields() },
-                        modifier = Modifier
-                            .width(200.dp)
-                            .height(60.dp)
-                    ) {
-                        Text(stringResource(R.string.clear_button))
-                    }
-                    Spacer(modifier = Modifier.width(16.dp))
-                    SaveFillButton(
-                        onClick = {
-                            if (viewModel.saveCat()) {
-                                onDismiss()
-                            }
-                        },
-                        modifier = Modifier
-                            .width(200.dp)
-                            .height(60.dp),
-                        enabled = viewModel.isValid()
-                    )
-                }
-
+                        .width(200.dp)
+                        .height(60.dp),
+                    enabled = viewModel.isValid()
+                )
             }
         }
     }

@@ -7,6 +7,7 @@ import cat.rubenzu03.catbrary.api.CatBreedApiRequest
 import cat.rubenzu03.catbrary.domain.CatBreedInfo
 import com.android.volley.VolleyError
 import cat.rubenzu03.catbrary.persistence.AppDatabase
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,6 +24,7 @@ class CatBreedListViewModel(application: Application) : AndroidViewModel(applica
     private val api = CatBreedApiRequest(application)
     private val db = AppDatabase.getDatabase(application)
     private val breedDao = db.catBreedInfoDao()
+    private var isFetching = false
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -34,19 +36,20 @@ class CatBreedListViewModel(application: Application) : AndroidViewModel(applica
     }
 
     fun fetchBreeds() {
-        // Solo hace fetch si no hay datos y no hay error
-        if (_breeds.value.isNotEmpty() || _error.value != null) {
-            return
-        }
+        if (isFetching) return
+        isFetching = true
+        _error.value = null
         _loading.value = true
         api.fetchAllCatBreedsInfo(
             url = "https://api.thecatapi.com/v1/breeds",
             onSuccess = { list ->
+                Log.d("CatbraryBreeds", "fetched ${list.size} breeds, sample intelligence=${list.firstOrNull()?.intelligence}, adaptability=${list.firstOrNull()?.adaptability}")
                 val breedsWithImages = mutableListOf<CatBreedInfo>()
                 var remaining = list.size
                 if (list.isEmpty()) {
                     _breeds.value = list
                     _loading.value = false
+                    isFetching = false
                     return@fetchAllCatBreedsInfo
                 }
                 list.forEach { breed ->
@@ -61,6 +64,7 @@ class CatBreedListViewModel(application: Application) : AndroidViewModel(applica
                                     breedDao.insertAll(breedsWithImages)
                                     _breeds.value = breedsWithImages
                                     _loading.value = false
+                                    isFetching = false
                                 }
                             }
                         },
@@ -73,6 +77,7 @@ class CatBreedListViewModel(application: Application) : AndroidViewModel(applica
                                     breedDao.insertAll(breedsWithImages)
                                     _breeds.value = breedsWithImages
                                     _loading.value = false
+                                    isFetching = false
                                 }
                             }
                         }
@@ -80,8 +85,12 @@ class CatBreedListViewModel(application: Application) : AndroidViewModel(applica
                 }
             },
             onError = { err: VolleyError ->
-                _error.value = err.message
+                val message = err.message ?: "HTTP ${err.networkResponse?.statusCode}"
+                if (_breeds.value.isEmpty()) {
+                    _error.value = message
+                }
                 _loading.value = false
+                isFetching = false
             }
         )
     }

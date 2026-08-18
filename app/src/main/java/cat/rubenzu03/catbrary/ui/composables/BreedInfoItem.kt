@@ -5,31 +5,28 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ExpandLess
-import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.IntSize
 import cat.rubenzu03.catbrary.domain.CatBreedInfo
 import cat.rubenzu03.catbrary.R
 import coil.compose.AsyncImage
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 
@@ -40,7 +37,11 @@ fun BreedInfoItem(breed: CatBreedInfo, modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxWidth()
             .padding(8.dp)
-            .clickable { expanded = !expanded }
+            .clickable { expanded = !expanded },
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+        ),
+        shape = MaterialTheme.shapes.extraLarge
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             AsyncImage(
@@ -57,26 +58,28 @@ fun BreedInfoItem(breed: CatBreedInfo, modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.height(8.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Column {
-                    Text(text = breed.name, style = MaterialTheme.typography.titleMedium)
+                    Text(text = breed.name, style = MaterialTheme.typography.titleLargeEmphasized)
                     Text(text = stringResource(R.string.origin) + ": ${breed.origin}", style = MaterialTheme.typography.bodyMedium)
                     Text(text = breed.temperament, style = MaterialTheme.typography.bodySmall)
                 }
                 Icon(
-                    imageVector = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                    painter = if (expanded) painterResource(R.drawable.ic_expand_less) else painterResource(R.drawable.ic_expand_more),
                     contentDescription = if (expanded) "Mostrar menos" else "Mostrar más"
                 )
             }
+            val expandSpec = MaterialTheme.motionScheme.fastSpatialSpec<IntSize>()
+            val fadeSpec = MaterialTheme.motionScheme.fastEffectsSpec<Float>()
             AnimatedVisibility(
                 visible = expanded,
                 enter = expandVertically(
-                    animationSpec = tween(300, easing = FastOutSlowInEasing)
+                    animationSpec = expandSpec
                 ) + fadeIn(
-                    animationSpec = tween(300, easing = FastOutSlowInEasing)
+                    animationSpec = fadeSpec
                 ),
                 exit = shrinkVertically(
-                    animationSpec = tween(300, easing = FastOutSlowInEasing)
+                    animationSpec = expandSpec
                 ) + fadeOut(
-                    animationSpec = tween(300, easing = FastOutSlowInEasing)
+                    animationSpec = fadeSpec
                 )
             ) {
                 Column {
@@ -147,8 +150,8 @@ fun BreedInfoItem(breed: CatBreedInfo, modifier: Modifier = Modifier) {
 @Composable
 fun CatBreedListScreen(breeds: List<CatBreedInfo>) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
-        items(breeds.filter { it.imageUrl.isNotBlank() }) { breed ->
-            BreedInfoItem(breed = breed)
+        items(breeds) { breed ->
+            BreedInfoItem(breed = breed, modifier = Modifier.animateItem())
         }
     }
 }
@@ -156,21 +159,36 @@ fun CatBreedListScreen(breeds: List<CatBreedInfo>) {
 @Composable
 fun StarRate(rating: Int, max: Int = 5) {
     Row {
-        repeat(rating ) { index ->
-            Icon(
-                imageVector = Icons.Default.Star,
-                contentDescription = null,
-                modifier = Modifier.size(20.dp),
-                tint = if (index < rating) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-            )
+        repeat(rating) {
+            SolidStar(tint = MaterialTheme.colorScheme.primary)
         }
-        repeat(max - rating) { index ->
+        repeat(max - rating) {
             Icon(
-                imageVector = Icons.Default.StarBorder,
+                painter = painterResource(R.drawable.ic_star_border),
                 contentDescription = null,
                 modifier = Modifier.size(20.dp),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
+    }
+}
+
+private val StarOutlineCoordinates = listOf(
+    12f to 17.27f, 18.18f to 21f, 16.54f to 13.97f, 22f to 9.24f,
+    14.81f to 8.63f, 12f to 2f, 9.19f to 8.63f, 2f to 9.24f,
+    7.46f to 13.97f, 5.82f to 21f
+)
+
+@Composable
+private fun SolidStar(tint: Color) {
+    Canvas(modifier = Modifier.size(20.dp)) {
+        val scale = size.minDimension / 24f
+        val path = Path().apply {
+            StarOutlineCoordinates.forEachIndexed { i, (x, y) ->
+                if (i == 0) moveTo(x * scale, y * scale) else lineTo(x * scale, y * scale)
+            }
+            close()
+        }
+        drawPath(path = path, color = tint)
     }
 }

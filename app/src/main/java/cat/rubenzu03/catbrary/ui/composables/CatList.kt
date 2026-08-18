@@ -16,11 +16,12 @@ fun CatList(
     cats: List<Cat>,
     modifier: Modifier,
     isEditMode: Boolean = false,
-    onDeleteCat: (Cat) -> Unit = {}
+    onDeleteCat: (Cat) -> Unit = {},
+    onToggleFavorite: (Cat) -> Unit = {}
 ) {
     LazyColumn(modifier = modifier) {
         items(cats) { cat ->
-            CatItem(cat, modifier = Modifier, isEditMode = isEditMode, onDeleteCat = onDeleteCat)
+            CatItem(cat, modifier = Modifier.animateItem(), isEditMode = isEditMode, onDeleteCat = onDeleteCat, onToggleFavorite = onToggleFavorite)
         }
     }
 }

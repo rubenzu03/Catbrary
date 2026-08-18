@@ -22,10 +22,10 @@ extensions.configure<ApplicationExtension> {
 
     defaultConfig {
         applicationId = "com.rubenzu03.catbrary"
-        minSdk = 31
+        minSdk = 33
         targetSdk = 37
-        versionCode = 1
-        versionName = "1.0.1"
+        versionCode = 2
+        versionName = "2.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -69,21 +69,22 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.material3.windowsize)
     implementation(libs.androidx.navigation.runtime.android)
     implementation(libs.volley)
     testImplementation(libs.junit)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.ui.test.junit4)
+    debugImplementation(platform(libs.androidx.compose.bom))
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.material3)
     implementation(libs.androidx.navigation.compose)
-    implementation(libs.material)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     implementation(libs.coil.compose)
-    implementation(libs.androidx.compose.material.icons.extended)
     ksp(libs.androidx.room.compiler)
 
 }

@@ -9,6 +9,10 @@ class CatRepository(private val catDao: CatDao) {
 
     suspend fun searchCatsByName(searchQuery: String) = catDao.searchCatsByName(searchQuery)
 
+    suspend fun getFavoriteCats() = catDao.getFavoriteCats()
+
+    suspend fun updateFavorite(id: Int, isFavorite: Boolean) = catDao.updateFavorite(id, isFavorite)
+
     //suspend fun getCatBreedsCount() = catDao.getCatBreedsCount()
 
     suspend fun insertCat(cat: Cat) = catDao.insertCat(cat)
