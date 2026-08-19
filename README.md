@@ -25,11 +25,11 @@ An app for keeping track of the cats you see around, and for getting info about 
 - Data persisted locally with Room
 
 ## Screenshots
+<img width="366" height="775" alt="Screenshot_20260819_164325" src="https://github.com/user-attachments/assets/44408814-fe9a-44ee-b978-d616929a0008" />
+<img width="366" height="775" alt="Screenshot_20260819_164123" src="https://github.com/user-attachments/assets/e30e9d6c-f7ca-4780-99ba-c854f2b9ab04" />
+<img width="366" height="775" alt="Screenshot_20260819_164412" src="https://github.com/user-attachments/assets/9f6532b8-4940-4c0f-9879-706744eb47da" />
+<img width="366" height="775" alt="Screenshot_20260819_164112" src="https://github.com/user-attachments/assets/f5a17c97-424f-452b-80c9-89e5faf7d449" />
 
-<img width="366" height="775" alt="Screenshot_20250725_005606" src="https://github.com/user-attachments/assets/b2a07db7-49fc-4016-a645-2bc3eb54a8b2" />
-<img width="366" height="775" alt="Screenshot_20250725_005741" src="https://github.com/user-attachments/assets/24262b29-b8c3-4232-91f1-49dc2c7978c0" />
-<img width="366" height="775" alt="Screenshot_20250725_005938" src="https://github.com/user-attachments/assets/9396267d-443a-422b-a608-ca85cea8cedf" />
-<img width="366" height="775" alt="Screenshot_20250725_010857" src="https://github.com/user-attachments/assets/36f878f7-8096-4242-9777-2fa367e7f29c" />
 
 ## Tech Stack
 
