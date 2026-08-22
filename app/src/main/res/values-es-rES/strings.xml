@@ -51,4 +51,27 @@
     <string name="cat_item_old">" "</string>
     <string name="clear_button">Limpiar</string>
     <string name="cat_dialog_empty_error">Al menos un campo debe estar lleno</string>
+    <string name="cat_saved">Gato guardado</string>
+    <string name="cat_deleted">Gato borrado</string>
+    <string name="retry">Reintentar</string>
+
+    <string name="cd_home">Inicio</string>
+    <string name="cd_search">Buscar</string>
+    <string name="cd_breeds">Razas</string>
+    <string name="cd_favorites">Favoritos</string>
+    <string name="cd_add">Añadir</string>
+    <string name="cd_edit">Editar gatos</string>
+    <string name="cd_done_editing">Terminar de editar</string>
+    <string name="cd_back">Atrás</string>
+    <string name="cd_add_photo">Añadir foto</string>
+    <string name="cd_add_image">Añadir imagen</string>
+    <string name="cd_add_favorite">Añadir a favoritos</string>
+    <string name="cd_remove_favorite">Quitar de favoritos</string>
+    <string name="cd_delete_cat">Borrar gato</string>
+    <string name="cd_expand">Desplegar</string>
+    <string name="cd_collapse">Plegar</string>
+    <string name="cd_show_more">Mostrar más</string>
+    <string name="cd_show_less">Mostrar menos</string>
+    <string name="cd_cat_photo">Foto del gato</string>
+
 </resources>

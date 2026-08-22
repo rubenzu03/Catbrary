@@ -57,4 +57,27 @@
     <string name="cat_item_years">years</string>
     <string name="cat_item_old" tools:ignore="MissingTranslation">old</string>
 
+    <string name="cat_saved">Cat saved</string>
+    <string name="cat_deleted">Cat deleted</string>
+    <string name="retry">Retry</string>
+
+    <string name="cd_home">Home</string>
+    <string name="cd_search">Search</string>
+    <string name="cd_breeds">Breeds</string>
+    <string name="cd_favorites">Favorites</string>
+    <string name="cd_add">Add</string>
+    <string name="cd_edit">Edit cats</string>
+    <string name="cd_done_editing">Done editing</string>
+    <string name="cd_back">Back</string>
+    <string name="cd_add_photo">Add photo</string>
+    <string name="cd_add_image">Add image</string>
+    <string name="cd_add_favorite">Add to favorites</string>
+    <string name="cd_remove_favorite">Remove from favorites</string>
+    <string name="cd_delete_cat">Delete cat</string>
+    <string name="cd_expand">Expand</string>
+    <string name="cd_collapse">Collapse</string>
+    <string name="cd_show_more">Show more</string>
+    <string name="cd_show_less">Show less</string>
+    <string name="cd_cat_photo">Cat photo</string>
+
 </resources>
