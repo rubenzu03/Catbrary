@@ -7,13 +7,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cat.rubenzu03.catbrary.R
 import cat.rubenzu03.catbrary.domain.Cat
 import cat.rubenzu03.catbrary.domain.CatBreeds
 import cat.rubenzu03.catbrary.persistence.CatRepository
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 import java.util.UUID
+
+sealed interface CatUiEvent {
+    data class Message(val text: String) : CatUiEvent
+}
 
 class CreateCatViewModel(private val repo: CatRepository, private val context: Context) : ViewModel() {
     var name by mutableStateOf("")
@@ -31,6 +38,9 @@ class CreateCatViewModel(private val repo: CatRepository, private val context: C
         private set
 
     var errorMessageResId by mutableStateOf<Int?>(null)
+
+    private val _uiEvents = MutableSharedFlow<CatUiEvent>(extraBufferCapacity = 1)
+    val uiEvents: SharedFlow<CatUiEvent> = _uiEvents
 
     fun clearFields() {
         name = ""
@@ -91,6 +101,7 @@ class CreateCatViewModel(private val repo: CatRepository, private val context: C
             loadAllCats()
             clearForm()
         }
+        _uiEvents.tryEmit(CatUiEvent.Message(context.getString(R.string.cat_saved)))
         return true
     }
 
@@ -145,5 +156,6 @@ class CreateCatViewModel(private val repo: CatRepository, private val context: C
             repo.deleteCat(cat)
             loadAllCats()
         }
+        _uiEvents.tryEmit(CatUiEvent.Message(context.getString(R.string.cat_deleted)))
     }
 }

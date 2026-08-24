@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class, androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
+
 package cat.rubenzu03.catbrary
 
 import android.os.Bundle
@@ -5,8 +7,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -21,8 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import cat.rubenzu03.catbrary.ui.theme.CatbraryTheme
 
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.LargeFlexibleTopAppBar
@@ -36,6 +39,7 @@ import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.runtime.LaunchedEffect
@@ -55,15 +59,21 @@ import androidx.navigation.compose.rememberNavController
 import cat.rubenzu03.catbrary.persistence.CatRepository
 import cat.rubenzu03.catbrary.ui.composables.CatList
 import cat.rubenzu03.catbrary.ui.composables.CreateFAB
+import cat.rubenzu03.catbrary.ui.viewmodel.CatUiEvent
 import cat.rubenzu03.catbrary.ui.viewmodel.CreateCatViewModel
 import cat.rubenzu03.catbrary.ui.viewmodel.CreateCatViewModelFactory
 import cat.rubenzu03.catbrary.ui.viewmodel.SearchViewModel
 import cat.rubenzu03.catbrary.ui.viewmodel.SearchViewModelFactory
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.FilledIconToggleButton
+import androidx.compose.material3.HorizontalFloatingToolbar
+import androidx.compose.material3.LoadingIndicator
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.Alignment
 import androidx.compose.animation.scaleIn
@@ -80,6 +90,13 @@ private sealed interface BreedContent {
     data object Content : BreedContent
 }
 
+private data class TopLevelDestination(
+    val route: String,
+    val iconRes: Int,
+    val labelRes: Int,
+    val cdRes: Int
+)
+
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -94,6 +111,7 @@ class MainActivity : ComponentActivity() {
             CatbraryTheme {
                 val navController = rememberNavController()
                 val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+                val snackbarHostState = remember { SnackbarHostState() }
                 val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
                     canScroll = { currentRoute == "home" || currentRoute == "breeds" }
                 )
@@ -101,12 +119,20 @@ class MainActivity : ComponentActivity() {
                     topAppBarScrollBehavior.state.heightOffset = 0f
                     topAppBarScrollBehavior.state.contentOffset = 0f
                 }
+                LaunchedEffect(viewModel) {
+                    viewModel.uiEvents.collect { event ->
+                        when (event) {
+                            is CatUiEvent.Message -> snackbarHostState.showSnackbar(event.text)
+                        }
+                    }
+                }
 val windowSizeClass = calculateWindowSizeClass(this@MainActivity)
                 if (windowSizeClass.widthSizeClass >= WindowWidthSizeClass.Medium) {
                     Row(modifier = Modifier.fillMaxSize()) {
                         AppNavigationRail(navController, currentRoute)
                         Scaffold(
                             topBar = { TopApplicationBar(viewModel, currentRoute, topAppBarScrollBehavior) },
+                            snackbarHost = { SnackbarHost(snackbarHostState) },
                             floatingActionButton = { CreateFAB(viewModel = viewModel) },
                             floatingActionButtonPosition = FabPosition.End
                         ) { innerPadding ->
@@ -122,6 +148,7 @@ val windowSizeClass = calculateWindowSizeClass(this@MainActivity)
                     Scaffold(
                         topBar = { TopApplicationBar(viewModel, currentRoute, topAppBarScrollBehavior) },
                         bottomBar = { BottomNavigationBar(navController) },
+                        snackbarHost = { SnackbarHost(snackbarHostState) },
                         floatingActionButton = { CreateFAB(viewModel = viewModel) },
                         floatingActionButtonPosition = FabPosition.End
                     ) { innerPadding ->
@@ -143,62 +170,68 @@ val windowSizeClass = calculateWindowSizeClass(this@MainActivity)
         val backStack by navController.currentBackStackEntryAsState()
         val currentRoute = backStack?.destination?.route
 
-        NavigationBar {
-            NavigationBarItem(
-                selected = currentRoute == "home",
-                onClick = {
-                    if (currentRoute != "home") {
-                        navController.navigate("home") {
-                            popUpTo(navController.graph.startDestinationId)
-                            launchSingleTop = true
-                        }
-                    }
-                },
-                icon = { Icon(painterResource(R.drawable.ic_home), contentDescription = "Home") },
-                label = { Text(stringResource(R.string.home_bottombar)) }
+        val destinations = remember {
+            listOf(
+                TopLevelDestination("home", R.drawable.ic_home, R.string.home_bottombar, R.string.cd_home),
+                TopLevelDestination("search", R.drawable.ic_search, R.string.search_bottombar, R.string.cd_search),
+                TopLevelDestination("breeds", R.drawable.ic_info, R.string.breeds_bottombar, R.string.cd_breeds),
+                TopLevelDestination("favorites", R.drawable.ic_favorite, R.string.favorites_bottombar, R.string.cd_favorites)
             )
+        }
 
-            NavigationBarItem(
-                selected = currentRoute == "search",
-                onClick = {
-                    if (currentRoute != "search") {
-                        navController.navigate("search") {
-                            popUpTo(navController.graph.startDestinationId)
-                            launchSingleTop = true
-                        }
-                    }
-                },
-                icon = { Icon(painterResource(R.drawable.ic_search), contentDescription = "Search") },
-                label = { Text(stringResource(R.string.search_bottombar)) }
-            )
+        val motionScheme = MaterialTheme.motionScheme
 
-            NavigationBarItem(
-                selected = currentRoute == "breeds",
-                onClick = {
-                    if (currentRoute != "breeds") {
-                        navController.navigate("breeds") {
-                            popUpTo(navController.graph.startDestinationId)
-                            launchSingleTop = true
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .navigationBarsPadding()
+                .padding(bottom = 16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            HorizontalFloatingToolbar(
+                expanded = true
+            ) {
+                destinations.forEach { destination ->
+                    FilledIconToggleButton(
+                        checked = currentRoute == destination.route,
+                        onCheckedChange = {
+                            if (currentRoute != destination.route) {
+                                navController.navigate(destination.route) {
+                                    popUpTo(navController.graph.startDestinationId)
+                                    launchSingleTop = true
+                                }
+                            }
                         }
+                    ) {
+                        Icon(
+                            painter = painterResource(destination.iconRes),
+                            contentDescription = stringResource(destination.cdRes)
+                        )
                     }
-                },
-                icon = { Icon(painterResource(R.drawable.ic_info), contentDescription = "Breeds") },
-                label = { Text(stringResource(R.string.breeds_bottombar)) }
-            )
 
-            NavigationBarItem(
-                selected = currentRoute == "favorites",
-                onClick = {
-                    if (currentRoute != "favorites") {
-                        navController.navigate("favorites") {
-                            popUpTo(navController.graph.startDestinationId)
-                            launchSingleTop = true
-                        }
+                    AnimatedVisibility(
+                        visible = currentRoute == destination.route,
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                        enter = fadeIn(animationSpec = motionScheme.defaultEffectsSpec()) +
+                            expandHorizontally(
+                                animationSpec = motionScheme.defaultSpatialSpec(),
+                                expandFrom = Alignment.End
+                            ),
+                        exit = fadeOut(animationSpec = motionScheme.fastEffectsSpec()) +
+                            shrinkHorizontally(
+                                animationSpec = motionScheme.fastSpatialSpec(),
+                                shrinkTowards = Alignment.End
+                            )
+                    ) {
+                        Text(
+                            text = stringResource(destination.labelRes),
+                            style = MaterialTheme.typography.labelLargeEmphasized,
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.padding(start = 8.dp, end = 16.dp)
+                        )
                     }
-                },
-                icon = { Icon(painterResource(R.drawable.ic_favorite), contentDescription = "Favorites") },
-                label = { Text(stringResource(R.string.favorites_bottombar)) }
-            )
+                }
+            }
         }
     }
 
@@ -223,7 +256,7 @@ val windowSizeClass = calculateWindowSizeClass(this@MainActivity)
                         }
                     }
                 },
-                icon = { Icon(painterResource(R.drawable.ic_home), contentDescription = "Home") },
+                icon = { Icon(painterResource(R.drawable.ic_home), contentDescription = stringResource(R.string.cd_home)) },
                 label = { Text(stringResource(R.string.home_bottombar)) }
             )
 
@@ -237,7 +270,7 @@ val windowSizeClass = calculateWindowSizeClass(this@MainActivity)
                         }
                     }
                 },
-                icon = { Icon(painterResource(R.drawable.ic_search), contentDescription = "Search") },
+                icon = { Icon(painterResource(R.drawable.ic_search), contentDescription = stringResource(R.string.cd_search)) },
                 label = { Text(stringResource(R.string.search_bottombar)) }
             )
 
@@ -251,7 +284,7 @@ val windowSizeClass = calculateWindowSizeClass(this@MainActivity)
                         }
                     }
                 },
-                icon = { Icon(painterResource(R.drawable.ic_info), contentDescription = "Breeds") },
+                icon = { Icon(painterResource(R.drawable.ic_info), contentDescription = stringResource(R.string.cd_breeds)) },
                 label = { Text(stringResource(R.string.breeds_bottombar)) }
             )
 
@@ -265,7 +298,7 @@ val windowSizeClass = calculateWindowSizeClass(this@MainActivity)
                         }
                     }
                 },
-                icon = { Icon(painterResource(R.drawable.ic_favorite), contentDescription = "Favorites") },
+                icon = { Icon(painterResource(R.drawable.ic_favorite), contentDescription = stringResource(R.string.cd_favorites)) },
                 label = { Text(stringResource(R.string.favorites_bottombar)) }
             )
         }
@@ -329,7 +362,7 @@ val windowSizeClass = calculateWindowSizeClass(this@MainActivity)
             when (state) {
                 BreedContent.Loading -> {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
+                        LoadingIndicator()
                     }
                 }
 
@@ -366,7 +399,9 @@ val windowSizeClass = calculateWindowSizeClass(this@MainActivity)
                     IconButton(onClick = { viewModel.toggleEditMode() }) {
                         Icon(
                             painter = if (viewModel.isEditMode) painterResource(R.drawable.ic_check) else painterResource(R.drawable.ic_edit),
-                            contentDescription = if (viewModel.isEditMode) "Done editing" else "Edit cats"
+                            contentDescription = stringResource(
+                                if (viewModel.isEditMode) R.string.cd_done_editing else R.string.cd_edit
+                            )
                         )
                     }
                 }
@@ -452,7 +487,7 @@ val windowSizeClass = calculateWindowSizeClass(this@MainActivity)
                         modifier = Modifier.fillMaxWidth()
                     )
                 },
-                leadingIcon = { Icon(painterResource(R.drawable.ic_search), contentDescription = "Search") },
+                leadingIcon = { Icon(painterResource(R.drawable.ic_search), contentDescription = stringResource(R.string.cd_search)) },
                 modifier = Modifier.fillMaxWidth()
             )
         }
@@ -478,7 +513,7 @@ val windowSizeClass = calculateWindowSizeClass(this@MainActivity)
                             .padding(16.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator()
+                        LoadingIndicator()
                     }
                 }
 

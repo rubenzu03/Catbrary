@@ -6,7 +6,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -36,8 +35,8 @@ fun BreedInfoItem(breed: CatBreedInfo, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(8.dp)
-            .clickable { expanded = !expanded },
+            .padding(8.dp),
+        onClick = { expanded = !expanded },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
         ),
@@ -64,7 +63,7 @@ fun BreedInfoItem(breed: CatBreedInfo, modifier: Modifier = Modifier) {
                 }
                 Icon(
                     painter = if (expanded) painterResource(R.drawable.ic_expand_less) else painterResource(R.drawable.ic_expand_more),
-                    contentDescription = if (expanded) "Mostrar menos" else "Mostrar más"
+                    contentDescription = stringResource(if (expanded) R.string.cd_show_less else R.string.cd_show_more)
                 )
             }
             val expandSpec = MaterialTheme.motionScheme.fastSpatialSpec<IntSize>()

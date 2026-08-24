@@ -1,6 +1,5 @@
 package cat.rubenzu03.catbrary.ui.composables
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.animation.*
@@ -8,7 +7,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -26,12 +27,12 @@ import cat.rubenzu03.catbrary.R
 fun CatItem(cat: Cat, modifier: Modifier, isEditMode: Boolean = false, onDeleteCat: (Cat) -> Unit = {}, onToggleFavorite: (Cat) -> Unit = {}){
     var showDeleteDialog by remember { mutableStateOf(false) }
     var isExpanded by remember { mutableStateOf(false) }
+    val haptics = LocalHapticFeedback.current
 
     Card(
         modifier = modifier
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .clickable { isExpanded = !isExpanded },
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        onClick = { isExpanded = !isExpanded },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
         ),
@@ -49,7 +50,7 @@ fun CatItem(cat: Cat, modifier: Modifier, isEditMode: Boolean = false, onDeleteC
 
                         AsyncImage(
                             model = cat.image,
-                            contentDescription = "Cat photo",
+                            contentDescription = stringResource(R.string.cd_cat_photo),
                             modifier = Modifier
                                 .width(baseSize)
                                 .aspectRatio(imageAspectRatio)
@@ -75,10 +76,17 @@ fun CatItem(cat: Cat, modifier: Modifier, isEditMode: Boolean = false, onDeleteC
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        IconButton(onClick = { onToggleFavorite(cat) }) {
+                        IconButton(
+                            onClick = {
+                                haptics.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                                onToggleFavorite(cat)
+                            }
+                        ) {
                             Icon(
                                 painter = if (cat.isFavorite) painterResource(R.drawable.ic_favorite) else painterResource(R.drawable.ic_favorite_border),
-                                contentDescription = if (cat.isFavorite) "Remove from favorites" else "Add to favorites",
+                                contentDescription = stringResource(
+                                    if (cat.isFavorite) R.string.cd_remove_favorite else R.string.cd_add_favorite
+                                ),
                                 tint = if (cat.isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
@@ -86,7 +94,7 @@ fun CatItem(cat: Cat, modifier: Modifier, isEditMode: Boolean = false, onDeleteC
                             IconButton(onClick = { showDeleteDialog = true }) {
                                 Icon(
                                     painterResource(R.drawable.ic_delete),
-                                    contentDescription = "Delete cat",
+                                    contentDescription = stringResource(R.string.cd_delete_cat),
                                     tint = MaterialTheme.colorScheme.error
                                 )
                             }
@@ -100,7 +108,7 @@ fun CatItem(cat: Cat, modifier: Modifier, isEditMode: Boolean = false, onDeleteC
 
                         Icon(
                             painter = if (isExpanded) painterResource(R.drawable.ic_expand_less) else painterResource(R.drawable.ic_expand_more),
-                            contentDescription = if (isExpanded) "Collapse" else "Expand",
+                            contentDescription = stringResource(if (isExpanded) R.string.cd_collapse else R.string.cd_expand),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -185,7 +193,7 @@ fun CatItem(cat: Cat, modifier: Modifier, isEditMode: Boolean = false, onDeleteC
 
                         AsyncImage(
                             model = cat.image,
-                            contentDescription = "Cat photo expanded",
+                            contentDescription = stringResource(R.string.cd_cat_photo),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .aspectRatio(expandedImageAspectRatio)

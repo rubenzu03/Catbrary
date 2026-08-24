@@ -15,11 +15,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -73,12 +71,12 @@ fun CreateCatFABDialog(onDismiss: () -> Unit,
                 IconButton(onClick = onDismiss) {
                     Icon(
                         painter = painterResource(R.drawable.ic_arrow_back),
-                        contentDescription = "Back",
+                        contentDescription = stringResource(R.string.cd_back),
                     )
                 }
                 Text(
                     stringResource(R.string.cat_dialog_title),
-                    style = MaterialTheme.typography.headlineMedium,
+                    style = MaterialTheme.typography.headlineMediumEmphasized,
                     modifier = Modifier.padding(start = 8.dp)
                 )
             }
@@ -130,22 +128,22 @@ fun CreateCatFABDialog(onDismiss: () -> Unit,
                             modifier.height(200.dp)
                         }
                     }
-                    .clip(RoundedCornerShape(16.dp))
+                    .clip(MaterialTheme.shapes.medium)
                     .border(
                         BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-                        RoundedCornerShape(16.dp)
+                        MaterialTheme.shapes.medium
                     ),
                 contentAlignment = Alignment.Center
             ) {
                 if (imageUri != null) {
                     AsyncImage(
                         model = imageUri,
-                        contentDescription = "Cat Image",
+                        contentDescription = stringResource(R.string.cd_cat_photo),
                         contentScale = ContentScale.Fit,
                         modifier = Modifier
                             .fillMaxWidth()
                             .heightIn(min = 150.dp, max = 400.dp)
-                            .clip(RoundedCornerShape(16.dp))
+                            .clip(MaterialTheme.shapes.medium)
                     )
                 } else {
                     Column(
@@ -154,7 +152,7 @@ fun CreateCatFABDialog(onDismiss: () -> Unit,
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.ic_add_a_photo),
-                            contentDescription = "Add Photo",
+                            contentDescription = stringResource(R.string.cd_add_photo),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(48.dp)
                         )
@@ -179,7 +177,7 @@ fun CreateCatFABDialog(onDismiss: () -> Unit,
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_add),
-                        contentDescription = "Add Image"
+                        contentDescription = stringResource(R.string.cd_add_image)
                     )
                 }
             }
@@ -201,18 +199,17 @@ fun CreateCatFABDialog(onDismiss: () -> Unit,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 24.dp),
-                horizontalArrangement = Arrangement.Center,
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 FilledTonalButton(
                     onClick = { viewModel.clearFields() },
                     modifier = Modifier
-                        .width(200.dp)
-                        .height(60.dp)
+                        .weight(1f)
+                        .heightIn(min = ButtonDefaults.MediumContainerHeight)
                 ) {
                     Text(stringResource(R.string.clear_button))
                 }
-                Spacer(modifier = Modifier.width(16.dp))
                 SaveFillButton(
                     onClick = {
                         if (viewModel.saveCat()) {
@@ -220,8 +217,7 @@ fun CreateCatFABDialog(onDismiss: () -> Unit,
                         }
                     },
                     modifier = Modifier
-                        .width(200.dp)
-                        .height(60.dp),
+                        .weight(1f),
                     enabled = viewModel.isValid()
                 )
             }

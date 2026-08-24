@@ -1,21 +1,19 @@
 package cat.rubenzu03.catbrary.ui.composables
 
-import android.R.attr.content
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.BasicAlertDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheetDefaults.properties
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.window.DialogProperties
 import cat.rubenzu03.catbrary.R
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DeleteConfirmationDialog(
     onDismiss: () -> Unit,
@@ -24,6 +22,14 @@ fun DeleteConfirmationDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
+        modifier = modifier,
+        icon = {
+            Icon(
+                painter = painterResource(R.drawable.ic_delete),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.error
+            )
+        },
         title = {
             Text(stringResource(R.string.delete_dialog_title))
         },
@@ -31,7 +37,12 @@ fun DeleteConfirmationDialog(
             Text(stringResource(R.string.delete_dialog_message))
         },
         confirmButton = {
-            TextButton(onClick = onConfirm) {
+            TextButton(
+                onClick = onConfirm,
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = MaterialTheme.colorScheme.error
+                )
+            ) {
                 Text(stringResource(R.string.delete))
             }
         },
@@ -39,8 +50,7 @@ fun DeleteConfirmationDialog(
             TextButton(onClick = onDismiss) {
                 Text(stringResource(R.string.cancel))
             }
-        },
-        modifier = modifier
+        }
     )
 }
 
