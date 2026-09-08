@@ -10,7 +10,6 @@ import kotlinx.coroutines.launch
 
 class SearchViewModel(private val repository: CatRepository) : ViewModel() {
     private val _searchQuery = mutableStateOf("")
-    val searchQuery: State<String> = _searchQuery
 
     private val _searchResults = mutableStateOf<List<Cat>>(emptyList())
     val searchResults: State<List<Cat>> = _searchResults

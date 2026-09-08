@@ -30,7 +30,7 @@ class CatBreedApiRequest(context: Context) {
         onError: (VolleyError) -> Unit
     ) {
         val request = object : JsonArrayRequest(
-            com.android.volley.Request.Method.GET,
+            Method.GET,
             url,
             null,
             { response ->
@@ -79,7 +79,7 @@ class CatBreedApiRequest(context: Context) {
         }
         val url = "https://api.thecatapi.com/v1/images/$refImageId"
         val request = object : JsonObjectRequest(
-            com.android.volley.Request.Method.GET,
+            Method.GET,
             url,
             null,
             { response ->

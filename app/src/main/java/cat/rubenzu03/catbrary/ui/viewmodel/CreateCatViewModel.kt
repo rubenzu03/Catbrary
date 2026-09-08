@@ -79,14 +79,14 @@ class CreateCatViewModel(
             if (age.isNotBlank()) {
                 val ageInt = age.toIntOrNull()
                 if (ageInt == null || ageInt <= 0) {
-                    errorMessageResId = cat.rubenzu03.catbrary.R.string.cat_dialog_name_error
+                    errorMessageResId = R.string.cat_dialog_name_error
                     return false
                 }
             }
             errorMessageResId = null
             return true
         }
-        errorMessageResId = cat.rubenzu03.catbrary.R.string.cat_dialog_empty_error
+        errorMessageResId = R.string.cat_dialog_empty_error
         return false
     }
 
