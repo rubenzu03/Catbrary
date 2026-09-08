@@ -79,6 +79,7 @@ fun CreateFAB(viewModel: CreateCatViewModel) {
 fun CreateFABPreview() {
     val context = LocalContext.current
     val repo = remember { CatRepository.getInstance(context) }
-    val viewModel: CreateCatViewModel = viewModel { CreateCatViewModel(repo, context) }
+    val viewModel: CreateCatViewModel =
+        viewModel { CreateCatViewModel(repo, context.applicationContext as android.app.Application) }
     CreateFAB(viewModel = viewModel)
 }

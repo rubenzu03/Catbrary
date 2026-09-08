@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="home_bottombar">Inicio</string>
-    <string name="age">Edad</string>
-    <string name="breed">Raza</string>
     <string name="breeds_bottombar">Razas</string>
     <string name="search_bottombar">Buscar</string>
     <string name="favorites_bottombar">Favoritos</string>
@@ -14,8 +12,6 @@
     <string name="delete">Borrar</string>
     <string name="cancel">Cancelar</string>
     <string name="origin">Origen</string>
-    <string name="temperament">Carácter</string>
-    <string name="description">Descripción</string>
     <string name="adaptability">Adaptabilidad</string>
     <string name="affection_level">Nivel de afección</string>
     <string name="child_friendly">Apta para niños</string>
@@ -27,7 +23,6 @@
     <string name="shedding_level">Nivel de caída del pelo</string>
     <string name="social_needs">Necesidades sociales</string>
     <string name="stranger_friendly">Apto para extraños</string>
-    <string name="home_topbar">Inicio</string>
     <string name="search_topbar">Buscar gatos</string>
     <string name="breeds_topbar">Razas</string>
     <string name="favorites_topbar">Favoritos</string>
@@ -37,9 +32,7 @@
     <string name="cat_dialog_age_label">Edad del gato</string>
     <string name="cat_dialog_name_hint">Introduce el nombre de tu gato</string>
     <string name="cat_dialog_age_hint">Introduce la edad de tu gato</string>
-    <string name="cat_dialog_photo_hint">Toca para añadir una foto</string>
     <string name="cat_dialog_breed_label">Raza del gato</string>
-    <string name="cat_dialog_breed_hint">Selecciona una raza</string>
     <string name="cat_dialog_cat_photo_text">Foto del gato</string>
     <string name="cat_dialog_cat_photo_hint">Selecciona una foto para el gato</string>
     <string name="save_button">Guardar</string>
@@ -53,7 +46,6 @@
     <string name="cat_dialog_empty_error">Al menos un campo debe estar lleno</string>
     <string name="cat_saved">Gato guardado</string>
     <string name="cat_deleted">Gato borrado</string>
-    <string name="retry">Reintentar</string>
 
     <string name="cd_home">Inicio</string>
     <string name="cd_search">Buscar</string>
