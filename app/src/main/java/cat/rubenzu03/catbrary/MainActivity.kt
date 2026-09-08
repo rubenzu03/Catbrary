@@ -68,7 +68,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.LoadingIndicator
@@ -106,7 +105,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val context = LocalContext.current
             val repo = remember { CatRepository.getInstance(context) }
-            val factory = remember { CreateCatViewModelFactory(repo, context) }
+            val factory = remember { CreateCatViewModelFactory(repo, this@MainActivity.application) }
             val viewModel: CreateCatViewModel = viewModel(factory = factory)
             CatbraryTheme {
                 val navController = rememberNavController()

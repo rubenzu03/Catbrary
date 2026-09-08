@@ -45,7 +45,7 @@ fun CatItem(cat: Cat, modifier: Modifier, isEditMode: Boolean = false, onDeleteC
                 ),
                 leadingContent = {
                     if (cat.image.isNotEmpty()) {
-                        var imageAspectRatio by remember { mutableStateOf(1f) }
+                        var imageAspectRatio by remember { mutableFloatStateOf(1f) }
                         val baseSize = if (isExpanded) 80.dp else 56.dp
 
                         AsyncImage(
@@ -189,7 +189,7 @@ fun CatItem(cat: Cat, modifier: Modifier, isEditMode: Boolean = false, onDeleteC
 
                     if (cat.image.isNotEmpty()) {
                         Spacer(modifier = Modifier.height(16.dp))
-                        var expandedImageAspectRatio by remember { mutableStateOf(1f) }
+                        var expandedImageAspectRatio by remember { mutableFloatStateOf(1f) }
 
                         AsyncImage(
                             model = cat.image,

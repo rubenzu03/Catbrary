@@ -1,11 +1,11 @@
 package cat.rubenzu03.catbrary.ui.viewmodel
 
-import android.content.Context
+import android.app.Application
 import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import cat.rubenzu03.catbrary.R
 import cat.rubenzu03.catbrary.domain.Cat
@@ -22,7 +22,12 @@ sealed interface CatUiEvent {
     data class Message(val text: String) : CatUiEvent
 }
 
-class CreateCatViewModel(private val repo: CatRepository, private val context: Context) : ViewModel() {
+class CreateCatViewModel(
+    private val repo: CatRepository,
+    application: Application
+) : AndroidViewModel(application) {
+    private val appContext: Application
+        get() = getApplication()
     var name by mutableStateOf("")
     var age by mutableStateOf("")
     var selectedBreed by mutableStateOf<CatBreeds?>(null)
@@ -52,9 +57,9 @@ class CreateCatViewModel(private val repo: CatRepository, private val context: C
 
     private fun saveImageToInternalStorage(uri: Uri): String? {
         return try {
-            val inputStream = context.contentResolver.openInputStream(uri)
+            val inputStream = appContext.contentResolver.openInputStream(uri)
             val fileName = "cat_${UUID.randomUUID()}.jpg"
-            val file = File(context.filesDir, fileName)
+            val file = File(appContext.filesDir, fileName)
 
             inputStream?.use { input ->
                 FileOutputStream(file).use { output ->
@@ -74,14 +79,14 @@ class CreateCatViewModel(private val repo: CatRepository, private val context: C
             if (age.isNotBlank()) {
                 val ageInt = age.toIntOrNull()
                 if (ageInt == null || ageInt <= 0) {
-                    errorMessageResId = cat.rubenzu03.catbrary.R.string.cat_dialog_name_error
+                    errorMessageResId = R.string.cat_dialog_name_error
                     return false
                 }
             }
             errorMessageResId = null
             return true
         }
-        errorMessageResId = cat.rubenzu03.catbrary.R.string.cat_dialog_empty_error
+        errorMessageResId = R.string.cat_dialog_empty_error
         return false
     }
 
@@ -101,7 +106,7 @@ class CreateCatViewModel(private val repo: CatRepository, private val context: C
             loadAllCats()
             clearForm()
         }
-        _uiEvents.tryEmit(CatUiEvent.Message(context.getString(R.string.cat_saved)))
+        _uiEvents.tryEmit(CatUiEvent.Message(appContext.getString(R.string.cat_saved)))
         return true
     }
 
@@ -156,6 +161,6 @@ class CreateCatViewModel(private val repo: CatRepository, private val context: C
             repo.deleteCat(cat)
             loadAllCats()
         }
-        _uiEvents.tryEmit(CatUiEvent.Message(context.getString(R.string.cat_deleted)))
+        _uiEvents.tryEmit(CatUiEvent.Message(appContext.getString(R.string.cat_deleted)))
     }
 }

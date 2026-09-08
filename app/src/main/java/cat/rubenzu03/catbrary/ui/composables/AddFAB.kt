@@ -5,7 +5,6 @@ import androidx.compose.material3.FloatingActionButtonMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleFloatingActionButton
-import androidx.compose.material3.ToggleFloatingActionButtonDefaults
 import androidx.compose.material3.ToggleFloatingActionButtonDefaults.animateIcon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,9 +31,6 @@ fun CreateFAB(viewModel: CreateCatViewModel) {
     var showDialog by remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
     val haptics = LocalHapticFeedback.current
-
-    val context = LocalContext.current
-    val repo = remember { CatRepository.getInstance(context) }
 
     if (showDialog) {
         CreateCatFABDialog(
@@ -79,6 +75,7 @@ fun CreateFAB(viewModel: CreateCatViewModel) {
 fun CreateFABPreview() {
     val context = LocalContext.current
     val repo = remember { CatRepository.getInstance(context) }
-    val viewModel: CreateCatViewModel = viewModel { CreateCatViewModel(repo, context) }
+    val viewModel: CreateCatViewModel =
+        viewModel { CreateCatViewModel(repo, context.applicationContext as android.app.Application) }
     CreateFAB(viewModel = viewModel)
 }
