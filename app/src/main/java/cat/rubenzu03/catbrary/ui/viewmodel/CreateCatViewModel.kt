@@ -75,23 +75,30 @@ class CreateCatViewModel(
     }
 
     fun isValid(): Boolean {
-        if (name.isNotBlank() || age.isNotBlank() || selectedBreed != null || imageUri != null) {
-            if (age.isNotBlank()) {
-                val ageInt = age.toIntOrNull()
-                if (ageInt == null || ageInt <= 0) {
-                    errorMessageResId = R.string.cat_dialog_name_error
-                    return false
-                }
-            }
-            errorMessageResId = null
-            return true
+        if (name.isBlank() && age.isBlank() && selectedBreed == null && imageUri == null) {
+            return false
         }
-        errorMessageResId = R.string.cat_dialog_empty_error
-        return false
+        if (age.isNotBlank() && (age.toIntOrNull() ?: 0) <= 0) {
+            return false
+        }
+        return true
     }
 
+    val canSave: Boolean
+        get() = isValid()
+
     fun saveCat(): Boolean {
-        if (!isValid()) return false
+
+        errorMessageResId = when {
+            name.isBlank() && age.isBlank() && selectedBreed == null && imageUri == null ->
+                R.string.cat_dialog_empty_error
+
+            age.isNotBlank() && (age.toIntOrNull() ?: 0) <= 0 ->
+                R.string.cat_dialog_name_error
+
+            else -> null
+        }
+        if (errorMessageResId != null) return false
         val catName = name.trim()
         val catAge = age.toIntOrNull() ?: 0
         val catBreed = selectedBreed ?: CatBreeds.NONE

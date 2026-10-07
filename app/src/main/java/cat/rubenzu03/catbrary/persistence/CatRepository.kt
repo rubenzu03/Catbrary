@@ -13,8 +13,6 @@ class CatRepository(private val catDao: CatDao) {
 
     suspend fun updateFavorite(id: Int, isFavorite: Boolean) = catDao.updateFavorite(id, isFavorite)
 
-    //suspend fun getCatBreedsCount() = catDao.getCatBreedsCount()
-
     suspend fun insertCat(cat: Cat) = catDao.insertCat(cat)
 
     suspend fun deleteCat(cat: Cat) = catDao.deleteCat(cat)

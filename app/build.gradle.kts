@@ -16,6 +16,14 @@ kotlin {
     }
 }
 
+// Room's schema export was configured under javaCompileOptions.annotationProcessorOptions, which
+// only applies to javac/kapt. Under KSP the argument never arrived, so KSP emitted
+// "Schema export directory was not provided to the annotation processor" on every build and
+// app/schemas only ever contained version 1.
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
+
 extensions.configure<ApplicationExtension> {
     namespace = "cat.rubenzu03.catbrary"
     compileSdk = 37
@@ -29,14 +37,6 @@ extensions.configure<ApplicationExtension> {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments += mapOf(
-                    "room.schemaLocation" to "$projectDir/schemas",
-                    "room.incremental" to "true"
-                )
-            }
-        }
         buildConfigField("String", "API_KEY", "\"${project.findProperty("MY_API_KEY") ?: ""}\"")
     }
 
@@ -81,6 +81,9 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.material3)
+    // Replaces 14 hand-rolled vector drawables. Core only (not -extended): -extended adds tens of
+    // thousands of methods, and this module ships with minify disabled.
+    implementation(libs.androidx.compose.material.icons.core)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
