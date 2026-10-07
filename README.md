@@ -20,8 +20,10 @@ An app for keeping track of the cats you see around, and for getting info about 
 - Favorite cats to keep a personal collection
 - Search through your catalog
 - Browse a catalog of cat breeds with photos, temperament, origin, and 1–5 trait ratings (adaptability, intelligence, affection, energy, grooming, and more)
-- Adaptive layout: navigation rail on medium+ screens, bottom bar on compact ones
-- Material 3 Expressive with a warm-amber theme, animated state transitions, and motion-scheme springs
+- Swipe a cat card to delete it (with confirmation), or use edit mode to delete in bulk
+- Adaptive layout: wide navigation rail on expanded screens, short navigation bar on medium, bottom navigation bar on compact
+- Material 3 Expressive with a warm-amber theme, animated state transitions, motion-scheme springs, and shape morphing on press
+- Pickable theme: System, Light, Dark, or Material You dynamic colour
 - Data persisted locally with Room
 
 ## Screenshots
@@ -38,11 +40,28 @@ An app for keeping track of the cats you see around, and for getting info about 
 |------------|------------------------------------|
 | Language   | Kotlin (JVM target 11)             |
 | UI         | Jetpack Compose + Material 3 Expressive |
+| Icons      | Material Icons (core)              |
 | Data       | Room (SQLite), KSP                 |
 | Networking | Volley (The Cat API)               |
 | Images     | Coil                               |
 | Navigation | Navigation Compose                 |
 | Build      | Gradle + Android Gradle Plugin     |
+
+## Project layout
+
+```
+app/src/main/java/cat/rubenzu03/catbrary/
+├── MainActivity.kt        # theme wiring + scaffold; no screen code
+├── ui/
+│   ├── theme/             # Colour, Shape, Spacing, Type, Theme (+ ThemeMode)
+│   ├── navigation/        # destinations, nav bars/rail, NavHost, top app bar, theme menu
+│   ├── screens/           # Home, Favorites, Search, Breeds
+│   └── components/        # cat list/cards, breed cards, forms, dialogs, screen states
+└── ui/viewmodel/          # ViewModels and factories
+```
+
+Design tokens live in `ui/theme/`: use `Spacing` for spacing and `MaterialTheme.shapes` /
+`MaterialTheme.typography` for everything else rather than hardcoding `dp`, `sp` or `fontWeight`.
 
 ## Installation
 

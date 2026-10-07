@@ -20,9 +20,6 @@ interface CatDao {
     @Query("UPDATE cats SET isFavorite = :isFavorite WHERE id = :id")
     suspend fun updateFavorite(id: Int, isFavorite: Boolean)
 
-   /* @Query("SELECT breed, SUM(breed) FROM cats  WHERE breed != 'NONE' GROUP BY breed")
-    suspend fun getCatBreedsCount(): List<Pair<String, Int>>*/
-
     @Insert
     suspend fun insertCat(cat: Cat)
 

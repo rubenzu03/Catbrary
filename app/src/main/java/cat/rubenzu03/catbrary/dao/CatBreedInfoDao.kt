@@ -17,4 +17,3 @@ interface CatBreedInfoDao {
     @Query("DELETE FROM cat_breed_info")
     suspend fun clearAll()
 }
-
